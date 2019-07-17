@@ -21,8 +21,7 @@
      D  i_lib                        10A   const
      D  i_orderBy                    10A   value
      D  o_handle                                  like(cstLst_handle_t)
-     D  o_msg                     32767A          options(*nopass :
-     D                                                    *varsize)
+     D  o_msg                     32767A          options(*nopass: *varsize)
       *
       *  Close List Of Database File Constraints
      D f_cloCstLst...
