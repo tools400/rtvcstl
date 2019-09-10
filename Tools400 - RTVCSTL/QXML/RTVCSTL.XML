@@ -51,7 +51,7 @@
       appblddate CDATA #REQUIRED
      >
      ]>
-<upload  appname="RTVCSTL"  appauthor="Thomas Raddatz"  appblddate=" 7/17/2019">
+<upload  appname="RTVCSTL"  appauthor="Thomas Raddatz"  appblddate=" 9/10/2019">
 <install_instructions><![CDATA[
      *----------------------------------------------------------------      ------
      *  1. Upload entire XML to your AS/400 to a source file 112 long, into any mbr
@@ -1436,7 +1436,7 @@ RTVCSTL - A Tools/400 Service Program
 RTVCSTL is service program for retrieving constraints of physical
 files.
 
-Dependencies: NONE
+Dependencies: BASICS1
 
 Compile members with the following PDM option:
 
@@ -1464,13 +1464,13 @@ srclen  =  "00112"
 srccssid=  "00273">
 <copysrc><![CDATA[
       /if not defined(COPYRIGHT_DSPEC)
-     h COPYRIGHT('V1.2 - 16.07.2019 - mailto: thomas.raddatz@tools400.de')
+     h COPYRIGHT('V1.2.1 - 24.07.2019 - mailto: thomas.raddatz@tools400.de')
       /eof
       /endif
      d RTVCSTL_VERSION...
-     d                 C                   '1.2'
+     d                 C                   '1.2.1'
      d RTVCSTL_DATE...
-     d                 C                   '16.07.2019'
+     d                 C                   '24.07.2019'
       *
 ]]>  </copysrc>
 </mbr>
@@ -1573,7 +1573,7 @@ srccssid=  "00273">
       * ============================================================= *
       *
      d msg_t           ds                  qualified           based(pDummy)
-     d  ID                            7A
+     d  ID                                 likeds(msgID_t)
      d  data                        512A
      d  type                         10a
      d  file                         10a

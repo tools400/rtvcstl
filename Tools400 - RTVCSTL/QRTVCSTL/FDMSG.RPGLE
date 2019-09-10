@@ -5,7 +5,7 @@
       * ============================================================= *
       *
      d msg_t           ds                  qualified           based(pDummy)
-     d  ID                            7A
+     d  ID                                 likeds(msgID_t)
      d  data                        512A
      d  type                         10a
      d  file                         10a

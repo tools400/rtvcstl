@@ -4,7 +4,7 @@ RTVCSTL - A Tools/400 Service Program
 RTVCSTL is service program for retrieving constraints of physical
 files.
 
-Dependencies: NONE
+Dependencies: BASICS1
 
 Compile members with the following PDM option:
 
