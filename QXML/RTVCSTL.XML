@@ -51,7 +51,7 @@
       appblddate CDATA #REQUIRED
      >
      ]>
-<upload  appname="RTVCSTL"  appauthor="Thomas Raddatz"  appblddate=" 9/10/2019">
+<upload  appname="RTVCSTL"  appauthor="Thomas Raddatz"  appblddate=" 6/03/2026">
 <install_instructions><![CDATA[
      *----------------------------------------------------------------      ------
      *  1. Upload entire XML to your AS/400 to a source file 112 long, into any mbr
@@ -1289,7 +1289,7 @@ mbrtext =  "RTVCSTL - Installer                               "
 srcfile =  "QRTVCSTL  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
      /* =================================================================== */
      /*                                                                     */
@@ -1315,7 +1315,7 @@ srccssid=  "00273">
      /* =================================================================== */
      /*  History:                                                           */
      /*                                                                     */
-     /*  Datum       Name          Änderung                                 */
+     /*  Datum       Name           nderung                                 */
      /*  ----------  ------------  ---------------------------------------  */
      /*                                                                     */
      /* =================================================================== */
@@ -1399,7 +1399,7 @@ srccssid=  "00273">
 
                 CRTPGM     PGM(&TOLIB/RTVCSTL_T1) +
                              MODULE(*PGM) +
-                             BNDSRVPGM(&TOLIB/RTVCSTL) +
+                             BNDSRVPGM(*LIBL/RTVCSTL) +
                              ACTGRP(*NEW) +
                              DETAIL(*BASIC) +
                              TGTRLS(&TGTRLS)
@@ -1428,7 +1428,7 @@ mbrtext =  "RTVCSTL Readme                                    "
 srcfile =  "QRTVCSTL  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
 RTVCSTL - A Tools/400 Service Program
 -------------------------------------
@@ -1461,17 +1461,16 @@ mbrtext =  "Copyright information                             "
 srcfile =  "QRTVCSTL  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
-      /if not defined(COPYRIGHT_DSPEC)
-     h COPYRIGHT('V1.2.1 - 24.07.2019 - mailto: thomas.raddatz@tools400.de')
-      /eof
-      /endif
-     d RTVCSTL_VERSION...
-     d                 C                   '1.2.1'
-     d RTVCSTL_DATE...
-     d                 C                   '24.07.2019'
-      *
+**free
+/if not defined(COPYRIGHT_DSPEC)
+ctl-opt copyright('V1.3 - 03.06.2026 - mailto: thomas.raddatz@tools400.de');
+/eof
+/endif
+dcl-c RTVCSTL_VERSION '1.3';
+dcl-c RTVCSTL_DATE '03.06.2026';
+
 ]]>  </copysrc>
 </mbr>
 <sendmsg  sendmsgid="CPF9897" sendmsgtype = "*STATUS   "><![CDATA[
@@ -1485,44 +1484,46 @@ mbrtext =  "cpybk   : RTVCSTL API - CSTL0100                  "
 srcfile =  "QRTVCSTL  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
-      /if not defined(cstl0100_t)
-      /define cstl0100_t
-      *
-      * RTVCSTL API - Format CSTL0100
-     d cstl0100_t      ds                  qualified based(pDummy)
-     d  file                         10a                                        File name
-     d  lib                          10a                                        Library name
-     d  cstName                     258a                                        Constraint name
-     d  cstLib                       10a                                        Constraint library
-     d  crtTmStmp                      z                                        Creation timestamp
-     d  cstType                       1a                                        Type: P=*PRIMARY
-     d                                                                                U=*UNIQUE
-     d                                                                                R=*REFCST
-     d                                                                                C=*CHKCST
-     d  chkPnd                        1a                                        Check Pending: Y/N
-     d  cstSts                        2a                                        DD=dfn/dis,DE=dfn/en
-     d                                                                          ED=est/dis,EE=est/en
-     d  numKeys                       3S 0                                      Number of Keys
-     d  keyLen                        5S 0                                      Total Key Length
-     d  parFile                      10a                                        Parent File Name
-     d  parLib                       10a                                        Parent Library Name
-     d  parKey                     1200a                                        Parent Key Inform.
-     d  fgnKey                     1200a                                        Foreign Key Inform.
-     d  dltRule                       2a                                        Dlt Rule:
-     d                                                                              RS=Restricted
-     d                                                                              NA=No Action
-     d                                                                              CC=Cascade
-     d                                                                              SN=Set Null
-     d                                                                              SD=Set Default
-     d  updRule                       2a                                        Upd Rule:
-     d                                                                              NA=Noaction
-     d                                                                              RS=Restrict
-     d  expTrunc                      1a                                        Expr. Truncated: Y/N
-     d  chkCstExp                  2000a                                        Check Cst Expression
-      *
-      /endif
+**free
+/if not defined(cstl0100_t)
+/define cstl0100_t
+
+// RTVCSTL API - Format CSTL0100
+dcl-ds cstl0100_t qualified template;
+  file      char(10); // File name
+  lib       char(10); // Library name
+  cstName   char(258); // Constraint name
+  cstLib    char(10); // Constraint librar
+  crtTmStmp timestamp; // Creation timestam
+  cstType   char(1); // Type: P=*PRIMARY
+  //    U=*UNIQUE
+  //    R=*REFCST
+  //    C=*CHKCST
+  chkPnd    char(1); // Check Pending: Y/
+  cstSts    char(2); // DD=dfn/dis,DE=dfn
+  // ED=est/dis,EE=est/en
+  numKeys   zoned(3); // Number of Keys
+  keyLen    zoned(5); // Total Key Length
+  parFile   char(10); // Parent File Name
+  parLib    char(10); // Parent Library Na
+  parKey    char(1200); // Parent Key Inform
+  fgnKey    char(1200); // Foreign Key Infor
+  dltRule   char(2); // Dlt Rule:
+  //    RS=Restricted
+  //    NA=No Action
+  //    CC=Cascade
+  //    SN=Set Null
+  //    SD=Set Default
+  updRule   char(2); // Upd Rule:
+  //    NA=Noaction
+  //    RS=Restrict
+  expTrunc  char(1); // Expr. Truncated:
+  chkCstExp char(2000); // Check Cst Express
+end-ds;
+
+/endif
 ]]>  </copysrc>
 </mbr>
 <sendmsg  sendmsgid="CPF9897" sendmsgtype = "*STATUS   "><![CDATA[
@@ -1536,21 +1537,23 @@ mbrtext =  "cpybk   : API error code                          "
 srcfile =  "QRTVCSTL  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
-      /if not defined(errCode_t )
-      /define errCode_t
-      *===============================================================*
-      *  API error code                                               *
-      *===============================================================*
-     d errCode_t       ds                  qualified           based(pDummy)
-     d  bytPrv                       10i 0
-     d  bytAvl                       10i 0
-     d  excID                         7a
-     d  reserved_1                    1a
-     d  excDta                      256a
-      *
-      /endif
+**free
+/if not defined(errCode_t)
+/define errCode_t
+//===============================================================*
+//  API error code                                               *
+//===============================================================*
+dcl-ds errCode_t qualified template;
+  bytPrv     int(10);
+  bytAvl     int(10);
+  excID      char(7);
+  reserved_1 char(1);
+  excDta     char(256);
+end-ds;
+
+/endif
 ]]>  </copysrc>
 </mbr>
 <sendmsg  sendmsgid="CPF9897" sendmsgtype = "*STATUS   "><![CDATA[
@@ -1564,26 +1567,29 @@ mbrtext =  "cpybk   : Message                                 "
 srcfile =  "QRTVCSTL  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
-      /if not defined(msg_t     )
-      /define msg_t
-      * ============================================================= *
-      *   Message structure                                           *
-      * ============================================================= *
-      *
-     d msg_t           ds                  qualified           based(pDummy)
-     d  ID                                 likeds(msgID_t)
-     d  data                        512A
-     d  type                         10a
-     d  file                         10a
-     d  lib                          10a
-      *
-     d msgID_t         ds                  qualified           based(pDummy)
-     d  prefix                        3a
-     d  nbr                           4S 0
-      *
-      /endif
+**free
+/if not defined(msg_t)
+/define msg_t
+// ============================================================= *
+//   Message structure                                           *
+// ============================================================= *
+
+dcl-ds msg_t qualified template;
+  ID   likeds(msgID_t);
+  data char(512);
+  type char(10);
+  file char(10);
+  lib  char(10);
+end-ds;
+
+dcl-ds msgID_t qualified template;
+  prefix char(3);
+  nbr    zoned(4);
+end-ds;
+
+/endif
 ]]>  </copysrc>
 </mbr>
 <sendmsg  sendmsgid="CPF9897" sendmsgtype = "*STATUS   "><![CDATA[
@@ -1597,19 +1603,21 @@ mbrtext =  "cpybk   : Qualified object name                   "
 srcfile =  "QRTVCSTL  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
-      /if not defined(qObj_t    )
-      /define qObj_t
-      * ============================================================= *
-      *   Qualified object name                                       *
-      *===============================================================*
-      *
-     d qObj_t          ds                  qualified           based(pDummy)
-     d  name                         10a
-     d  lib                          10a
-      *
-      /endif
+**free
+/if not defined(qObj_t)
+/define qObj_t
+// ============================================================= *
+//   Qualified object name                                       *
+//===============================================================*
+
+dcl-ds qObj_t qualified template;
+  name char(10);
+  lib  char(10);
+end-ds;
+
+/endif
 ]]>  </copysrc>
 </mbr>
 <sendmsg  sendmsgid="CPF9897" sendmsgtype = "*STATUS   "><![CDATA[
@@ -1623,70 +1631,55 @@ mbrtext =  "Retrieve Constraint List API - Public Interface   "
 srcfile =  "QRTVCSTL  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
-      *=====================================================================*
-      *  Author  :  Thomas Raddatz                                          *
-      *  Date    :  21.06.2003                                              *
-      *  E-mail  :  thomas.raddatz@tools400.de                              *
-      *  Homepage:  www.tools400.de                                         *
-      *=====================================================================*
-      *  Prorotypes and Reference Fields of Service Program RTVCSTL         *
-      *=====================================================================*
-      *
-      *  Reference fields
-     D cstLst_handle_t...
-     D                 S               *   based(pDummy)
-      *
-      *  Open List of Database File Constraints
-     D f_opnCstLst...
-     D                 PR              N   opdesc
-     D                                     EXTPROC('RTVCSTLR1+
-     D                                     _f_opnCstLst+
-     D                                     ')
-     D  i_file                       10A   const
-     D  i_lib                        10A   const
-     D  i_orderBy                    10A   value
-     D  o_handle                                  like(cstLst_handle_t)
-     D  o_msg                     32767A          options(*nopass: *varsize)
-      *
-      *  Close List Of Database File Constraints
-     D f_cloCstLst...
-     D                 PR              N
-     D                                     EXTPROC('RTVCSTLR1+
-     D                                     _f_cloCstLst+
-     D                                     ')
-     D  io_handle                      *
-      *
-      *  Get First Constraint
-     D f_getFirstCst...
-     D                 PR              N   opdesc
-     D                                     extproc('RTVCSTLR1+
-     D                                     _f_getFirstCst+
-     D                                     ')
-     D  i_handle                           value  like(cstLst_handle_t)
-     D  o_data                    32767A   options(*varsize)
-      *
-      *  Get Next Constraint
-     D f_getNextCst...
-     D                 PR              N   opdesc
-     D                                     extproc('RTVCSTLR1+
-     D                                     _f_getNextCst+
-     D                                     ')
-     D  i_handle                           value  like(cstLst_handle_t)
-     D  o_data                    32767A   options(*varsize)
-      *
-      *===============================================================*
-      *  Get Number of Constraints available
-      *===============================================================*
-      *
-     D f_getNumCstAvl...
-     D                 PR            10I 0
-     D                                     extproc('RTVCSTLR1+
-     D                                     _f_getNumCstAvl+
-     D                                     ')
-     D  i_handle                           value  like(cstLst_handle_t)
-      *
+**free
+//=====================================================================*
+//  Author  :  Thomas Raddatz                                          *
+//  Date    :  21.06.2003                                              *
+//  E-mail  :  thomas.raddatz@tools400.de                              *
+//  Homepage:  www.tools400.de                                         *
+//=====================================================================*
+//  Prorotypes and Reference Fields of Service Program RTVCSTL         *
+//=====================================================================*
+
+//  Reference fields
+dcl-s cstLst_handle_t pointer template;
+
+//  Open List of Database File Constraints
+dcl-pr f_opnCstLst ind opdesc extproc('RTVCSTLR1_f_opnCstLst');
+  i_file    char(10) const;
+  i_lib     char(10) const;
+  i_orderBy char(10) value;
+  o_handle  like(cstLst_handle_t);
+  o_msg     char(32767) options(*nopass: *varsize);
+end-pr;
+
+//  Close List Of Database File Constraints
+dcl-pr f_cloCstLst ind extproc('RTVCSTLR1_f_cloCstLst');
+  io_handle pointer;
+end-pr;
+
+//  Get First Constraint
+dcl-pr f_getFirstCst ind opdesc extproc('RTVCSTLR1_f_getFirstCst');
+  i_handle like(cstLst_handle_t) value;
+  o_data   char(32767) options(*varsize);
+end-pr;
+
+//  Get Next Constraint
+dcl-pr f_getNextCst ind opdesc extproc('RTVCSTLR1_f_getNextCst');
+  i_handle like(cstLst_handle_t) value;
+  o_data   char(32767) options(*varsize);
+end-pr;
+
+//===============================================================*
+//  Get Number of Constraints available
+//===============================================================*
+
+dcl-pr f_getNumCstAvl int(10) extproc('RTVCSTLR1_f_getNumCstAvl');
+  i_handle like(cstLst_handle_t) value;
+end-pr;
+
 ]]>  </copysrc>
 </mbr>
 <sendmsg  sendmsgid="CPF9897" sendmsgtype = "*STATUS   "><![CDATA[
@@ -1700,311 +1693,307 @@ mbrtext =  "Retrieve Database File Description (QDBRTVFD) API "
 srcfile =  "QRTVCSTL  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
-      /if not defined(QDBRTVFD)
-      /define QDBRTVFD
-      *
-      *  Retrieve Database File Description (QDBRTVFD) API
-     d QDBRTVFD...
-     d                 pr                  extpgm('QDBRTVFD')
-     d  o_rcvVar                  65535a         options(*varsize)
-     d  i_lenRcvVar                  10i 0 const
-     d  o_retFileName                20A
-     d  i_format                      8a   const
-     d  i_qFile                      20A   const
-     d  i_rcdFormat                  10a   const
-     d  i_override                    1a   const
-     d  i_system                     10a   const
-     d  i_formatType                 10a   const
-     d  io_errCode                65535a          options(*varsize )
-      *
-      * ---------------------------------------------------
-      *  FILD0100:
-      * ---------------------------------------------------
-      *
-      *  File Definition Header (Qdb_Qdbfh)
-     d Qdb_Qdbfh_t     ds                  qualified               based(pDummy)
-     d  Qdbfyret               1      4I 0
-     d  Qdbfyavl               5      8I 0
-     d  Qdbfhflg               9     10U 0
-     d  Reserved_7            11     14A
-     d  Qdbflbnum             15     16I 0
-     d  Qdbfknum              17     18I 0
-     d  Qdbfkmxl              19     20I 0
-     d  Qdbfkflg              21     21A
-     d  Qdbfkfdm              22     22A
-     d  Reserved_10           23     30A
-     d  Qdbfhaut              31     40A
-     d  Qdbfhupl              41     41A
-     d  Qdbfhmxm              42     43I 0
-     d  Qdbfwtfi              44     45I 0
-     d  Qdbfhfrt              46     47I 0
-     d  Qdbfhmnum             48     49I 0
-     d  Qdbfapsize            50     51I 0
-     d  Reserved_11           52     58A
-     d  Qdbfbrwt              59     60I 0
-     d  Qaaf                  61     61A
-     d  Qdbffmtnum            62     63I 0
-     d  Qdbfhfl2              64     65A
-     d  Qdbfvrm               66     67I 0
-     d  Qaaf2                 68     69A
-     d  Qdbfhcrt              70     82A
-     d  Reserved_18           83     84A
-     d  Qdbfhtxt              85    134A
-     d  Reserved_19          135    147A
-     d  Qdbfsrcf             148    157A
-     d  Qdbfsrcm             158    167A
-     d  Qdbfsrcl             168    177A
-     d  Qdbfkrcv             178    178A
-     d  Reserved_20          179    201A
-     d  Qdbftcid             202    203I 0
-     d  Qdbfasp              204    205I 0
-     d  Qdbfnbit             206    206A
-     d  Qdbfmxfnum           207    208I 0
-     d  Reserved_22          209    284A
-     d  Qdbfodic             285    288I 0
-     d  Reserved_23          289    302A
-     d  Qdbffigl             303    304I 0
-     d  Qdbfmxrl             305    306I 0
-     d  Reserved_24          307    314A
-     d  Qdbfgkct             315    316I 0
-     d  Qdbfos               317    320I 0
-     d  Reserved_25          321    328A
-     d  Qdbfocs              329    332I 0
-     d  Reserved_26          333    336A
-     d  Qdbfpact             337    338A
-     d  Qdbfhrls             339    344A
-     d  Reserved_27          345    364A
-     d  Qdbpfof              365    368I 0
-     d  Qdblfof              369    372I 0
-     d  Qdbfnlsb             373    373A
-     d  Qdbflang             374    376A
-     d  Qdbfcnty             377    378A
-     d  Qdbfjorn             379    382I 0
-     d  Qdbfevid             383    386I 0
-     d  Reserved_28          387    400A
-      *
-      *  File Scope Array (Qdb_Qdbfb)
-     d Qdb_Qdbfb_t     ds                  qualified               based(pDummy)
-     d  Reserved_48            1     48A
-     d  Qdbfbf                49     58A
-     d  Qdbfbfl               59     68A
-     d  Qdbft                 69     78A
-     d  Reserved_49           79    115A
-     d  Qdbfbgky             116    117I 0
-     d  Reserved_50          118    119A
-     d  Qdbfblky             120    121I 0
-     d  Reserved_51          122    123A
-     d  Qdbffogl             124    125I 0
-     d  Reserved_52          126    128A
-     d  Qdbfsoon             129    130I 0
-     d  Qdbfsoof             131    134I 0
-     d  Qdbfksof             135    138I 0
-     d  Qdbfkyct             139    140I 0
-     d  Qdbfgenf             141    142I 0
-     d  Qdbfodis             143    146I 0
-     d  Reserved_53          146    160A
-      *
-      *  Key Specification Array (Qdb_Qdbfk)
-     d Qdb_Qdbfk_t     ds                  qualified               based(pDummy)
-     d  Qdbfkfld               1     10A
-     d  Reserved_59           11     13A
-     d  Qdbfksq               14     14A
-     d  Reserved_61           15     32A
-      *
-      *  ... Physical File Specific Attributes (Qdb_Qdbfphys)
-     D Qdb_Qdbfphys_t  DS                  qualified            based(pDummy)
-     D  Qdbfpalc               1      2A
-     D  Qdbfcmps               3      3A
-     D  Reserved_29            4     11A
-     D  Qdbfprnum             12     15I 0
-     D  Qdbfpri               16     17I 0
-     D  Qdbfprinum            18     19I 0
-     D  Qdbforid              20     23I 0
-     D  Qflags                24     24A
-     D  Qdbfotrg              25     28A
-     D  Qdbftrgn              29     30I 0
-     D  Qdbfofcs              31     34I 0
-     D  Qdbfcstn              35     38I 0
-     D  Qdbfodl               39     42I 0
-     D  Reserved_32           43     48A
-      *
-      *  ... Constraint Definition Header (Qdb_Qdbf_Constraint)
-     D Qdb_Qdbf_Constraint_t...
-     D                 DS                  qualified            based(pDummy)
-     D Qdbf_csto               1      4I 0
-     D Qdbf_hlen               5      8I 0
-     D Qdbf_type               9      9A
-     D Qdbf_chkpd             10     10A
-     D Qdbf_state             11     11A
-     D Qdbf_abled             12     12A
-     D Qdbf_add_ts            13     25A
-     D Qdbf_cst_lin           26     35A
-     D Qdbf_cst_lp2           36     39I 0
-     D Reserved_54            40     64A
-     D Qdbf_cst_name          65    322A
-      *
-      *  ... Constraint Keys (Qdb_Qdbf_Keyn)
-     D Qdb_Qdbf_Keyn_t...
-     D                 DS                  qualified            based(pDummy)
-     D  Qdbf_kslen             1      4I 0
-     D  Qdbf_nokys             5      8I 0
-     D  Qdbf_klen              9     12I 0
-     D  Revcst_7              13     64A
-     D  Qdbf_narray           65   3904A
-      *
-      *  ... Key Name Array (Qdb_Qdbf_Narray)
-     D Qdb_Qdbf_Narray_t...
-     D                 DS                  qualified            based(pDummy)
-     D  Qdbf_kname             1     10A
-     D  Revcst_6              11     32A
-      *
-      *  ... Referential Constraint Definition (Qdb_Qdbf_Riafk_Afkd)
-     D Qdb_Qdbf_Riafk_Afkd_t...
-     D                 DS                  qualified            based(pDummy)
-     D  Qdbf_riafk_pkfn...
-     D                         1     10A
-     D  Qdbf_riafk_pkln...
-     D                        11     20A
-     D  Revcst_3...
-     D                        21     64A
-     D  Qdbf_riafk_fkcdr...
-     D                        65     65A
-     D  Revcst_4...
-     D                        66     66A
-     D  Qdbf_riafk_fkcur...
-     D                        67     67A
-     D  Revcst_5...
-     D                        68    128A
-      *
-      *  ... Check Constraint (Qdb_Qdbf_Chk_Cst)
-     D Qdb_Qdbf_Chk_Cst_t...
-     D                 DS                  qualified            based(pDummy)
-     D  Qdbf_chkcst_len...
-     D                         1      4I 0
-     D  Qdbf_chkexpr_len...
-     D                         5      8I 0
-     D  Revcst_8...
-     D                         9     32A
-     D  Qdbf_chkexpr...
-     D                        33   2000A
-      *
-      * ---------------------------------------------------
-      *  FILD0200
-      * ---------------------------------------------------
-      *
-      *  Format Definition Header (Qdb_Qddfmt)
-     d Qdb_Qddfmt_t    ds                  qualified               based(pDummy)
-     d  bytRet                 1      4I 0
-     d  bytAvl                 5      8I 0
-     d  Reserved_62            9     32A
-     d  Qddfmtf               33     33A
-     d  Qddfxlto              34     37I 0
-     d  Qddfrcao              38     41I 0
-     d  Qddfdico              42     45I 0
-     d  Qddfrcid              46     47I 0
-     d  Qddfsrcd              48     49I 0
-     d  Qddfrtcd              50     51I 0
-     d  Qddfrlcd              52     53I 0
-     d  Reserved_64           54     60A
-     d  Qddftflgs             61     61A
-     d  Qddflgs               62     62U 0
-     d  Reserved_67           63     66A
-     d  Qddfrlen              67     70I 0
-     d  Qddfname              71     80A
-     d  Qddfseq               81     93A
-     d  Qddftext              94    143A
-     d  Qddffldnum           144    145I 0
-     d  Qddf_Identity_Off...
-     d                       146    149I 0
-      * Qddffldx                    CHAR(*)   Start of field definition array (Qdb_Qddffld)
-     d  Qddffldx             257    512A
-      *
-      *  Field Header (Qdb_Qddffld)
-     d Qdb_Qddffld_t   ds                  qualified               based(pDummy)
-     d  Qddfdefl               1      4I 0
-     d  Qddffldi               5     34A
-     d  Qddfflde              35     64A
-     d  Qddfftyp              65     66A
-     d  Qddffiob              67     67A
-     d  Qddffobo              68     71I 0
-     d  Qddffibo              72     75I 0
-     d  Qddffldb              76     77I 0
-     d  Qddffldd              78     79I 0
-     d  Qddffldp              80     81I 0
-      *  ...
-     d  Qddffldst2            86     86U 0
-      *  ...
-     d  Qddflalc              92     93U 0
-     d  Qddfdttf              94     94A
-     d  Qddfdtts              95     95A
-     d  Qddfcsid              96     97U 0
-      *  ...
-     d  Qddfdftd             195    198U 0
-      *  ...
-     d  Qddftxtd             209    212I 0
-     d  Reserved_102         213    214A
-     d  Qddfrefd             215    218I 0
-     d  Qddfedtl             219    220I 0
-     d  Qddfedtd             221    224I 0
-     d  Reserved_76          225    226I 0
-     d  Qddfchd              227    230I 0
-      *  ...
-     d  Qddfxals             237    240I 0
-      *
-      *  Reference Information (Qdb_Qddfrefi)
-     d Qdb_Qddfrefi_t  ds                  qualified               based(pDummy)
-     d  Qddfrcde               1      1A
-     d  Qddfrfil               2     11A
-     d  Qddfrlib              12     21A
-     d  Qddfrfmt              22     31A
-     d  Qddfrfld              32     61A
-     d  Reserved_78           62     80A
-      *
-      *  Edit Code/Edit Word Information (Qdb_Qddfedcw)
-     d Qdb_Qddfedcw_t  ds                  qualified               based(pDummy)
-     d  Qddfecdi               1      2A
-     d  Qddfecde               1      1A
-     d  Qddfecdx               2      2A
-     d  Reserved_79            3     16A
-     d  Qddfewd               17     80A
-      *
-      *  Field Text (Qdb_Qddfftxt)
-     d Qdb_Qddfftxt_t  ds                  qualified               based(pDummy)
-     d  Qddfftxt               1     50A
-      *
-      *  Alias name structure (Qdb_Qddfalis)
-     d Qdb_Qddfalis_t  ds                  qualified               based(pDummy)
-     d  Qddfalsl               1      2I 0
-     d  Reserved_85            3     16A
-     d  Qddfalsn              17    274A
-      *
-      *  Default Value Description Information (Qdb_Qddfdft)
-     d Qdb_Qddfdft_t   ds                  qualified               based(pDummy)
-     d  Qddfdftl               1      2I 0
-     d  Qddfdfta               3      3U 0
-     d  Reserved_87            4     16A
-     d  Qddfdftv              17  32740A
-      *
-     d QDDFDFTA_GRAPHIC...
-     d                 c                   128                                  DBCS/graphic d
-     d QDDFDFTA_HEX...
-     d                 c                   32                                   Hex default.
-     d QDDFDFTA_NULL...
-     d                 c                   4                                    Null default.
-     d QDDFDFTA_DATE_TIME...
-     d                 c                   2                                    Current date/t
-     d QDDFDFTA_DFT_KEYWORD...
-     d                 c                   1                                    DFT/DFTVAL spe
-      *
-      *  Column Heading Information (Qdb_Qddfcolh)
-     d Qdb_Qddfcolh_t  ds                  qualified               based(pDummy)
-     d  Qddfch1                1     20A
-     d  Qddfch2               21     40A
-     d  Qddfch3               41     60A
-      *
-      /endif
+**free
+/if not defined(QDBRTVFD)
+/define QDBRTVFD
+
+//  Retrieve Database File Description (QDBRTVFD) API
+dcl-pr QDBRTVFD extpgm('QDBRTVFD');
+  o_rcvVar      char(65535) options(*varsize);
+  i_lenRcvVar   int(10) const;
+  o_retFileName char(20);
+  i_format      char(8) const;
+  i_qFile       char(20) const;
+  i_rcdFormat   char(10) const;
+  i_override    char(1) const;
+  i_system      char(10) const;
+  i_formatType  char(10) const;
+  io_errCode    char(65535) options(*varsize);
+end-pr;
+
+// ---------------------------------------------------
+//  FILD0100:
+// ---------------------------------------------------
+
+//  File Definition Header (Qdb_Qdbfh)
+dcl-ds Qdb_Qdbfh_t qualified template;
+  Qdbfyret    int(10);
+  Qdbfyavl    int(10);
+  Qdbfhflg    uns(5);
+  Reserved_7  char(4);
+  Qdbflbnum   int(5);
+  Qdbfknum    int(5);
+  Qdbfkmxl    int(5);
+  Qdbfkflg    char(1);
+  Qdbfkfdm    char(1);
+  Reserved_10 char(8);
+  Qdbfhaut    char(10);
+  Qdbfhupl    char(1);
+  Qdbfhmxm    int(5);
+  Qdbfwtfi    int(5);
+  Qdbfhfrt    int(5);
+  Qdbfhmnum   int(5);
+  Qdbfapsize  int(5);
+  Reserved_11 char(7);
+  Qdbfbrwt    int(5);
+  Qaaf        char(1);
+  Qdbffmtnum  int(5);
+  Qdbfhfl2    char(2);
+  Qdbfvrm     int(5);
+  Qaaf2       char(2);
+  Qdbfhcrt    char(13);
+  Reserved_18 char(2);
+  Qdbfhtxt    char(50);
+  Reserved_19 char(13);
+  Qdbfsrcf    char(10);
+  Qdbfsrcm    char(10);
+  Qdbfsrcl    char(10);
+  Qdbfkrcv    char(1);
+  Reserved_20 char(23);
+  Qdbftcid    int(5);
+  Qdbfasp     int(5);
+  Qdbfnbit    char(1);
+  Qdbfmxfnum  int(5);
+  Reserved_22 char(76);
+  Qdbfodic    int(10);
+  Reserved_23 char(14);
+  Qdbffigl    int(5);
+  Qdbfmxrl    int(5);
+  Reserved_24 char(8);
+  Qdbfgkct    int(5);
+  Qdbfos      int(10);
+  Reserved_25 char(8);
+  Qdbfocs     int(10);
+  Reserved_26 char(4);
+  Qdbfpact    char(2);
+  Qdbfhrls    char(6);
+  Reserved_27 char(20);
+  Qdbpfof     int(10);
+  Qdblfof     int(10);
+  Qdbfnlsb    char(1);
+  Qdbflang    char(3);
+  Qdbfcnty    char(2);
+  Qdbfjorn    int(10);
+  Qdbfevid    int(10);
+  Reserved_28 char(14);
+end-ds;
+
+//  File Scope Array (Qdb_Qdbfb)
+dcl-ds Qdb_Qdbfb_t qualified template;
+  Reserved_48 char(48);
+  Qdbfbf      char(10);
+  Qdbfbfl     char(10);
+  Qdbft       char(10);
+  Reserved_49 char(37);
+  Qdbfbgky    int(5);
+  Reserved_50 char(2);
+  Qdbfblky    int(5);
+  Reserved_51 char(2);
+  Qdbffogl    int(5);
+  Reserved_52 char(3);
+  Qdbfsoon    int(5);
+  Qdbfsoof    int(10);
+  Qdbfksof    int(10);
+  Qdbfkyct    int(5);
+  Qdbfgenf    int(5);
+  Qdbfodis    int(10);
+  Reserved_53 char(15) pos(146);
+end-ds;
+
+//  Key Specification Array (Qdb_Qdbfk)
+dcl-ds Qdb_Qdbfk_t qualified template;
+  Qdbfkfld    char(10);
+  Reserved_59 char(3);
+  Qdbfksq     char(1);
+  Reserved_61 char(18);
+end-ds;
+
+//  ... Physical File Specific Attributes (Qdb_Qdbfphys)
+dcl-ds Qdb_Qdbfphys_t qualified template;
+  Qdbfpalc    char(2);
+  Qdbfcmps    char(1);
+  Reserved_29 char(8);
+  Qdbfprnum   int(10);
+  Qdbfpri     int(5);
+  Qdbfprinum  int(5);
+  Qdbforid    int(10);
+  Qflags      char(1);
+  Qdbfotrg    char(4);
+  Qdbftrgn    int(5);
+  Qdbfofcs    int(10);
+  Qdbfcstn    int(10);
+  Qdbfodl     int(10);
+  Reserved_32 char(6);
+end-ds;
+
+//  ... Constraint Definition Header (Qdb_Qdbf_Constraint)
+dcl-ds Qdb_Qdbf_Constraint_t qualified template;
+  Qdbf_csto     int(10);
+  Qdbf_hlen     int(10);
+  Qdbf_type     char(1);
+  Qdbf_chkpd    char(1);
+  Qdbf_state    char(1);
+  Qdbf_abled    char(1);
+  Qdbf_add_ts   char(13);
+  Qdbf_cst_lin  char(10);
+  Qdbf_cst_lp2  int(10);
+  Reserved_54   char(25);
+  Qdbf_cst_name char(258);
+end-ds;
+
+//  ... Constraint Keys (Qdb_Qdbf_Keyn)
+dcl-ds Qdb_Qdbf_Keyn_t qualified template;
+  Qdbf_kslen  int(10);
+  Qdbf_nokys  int(10);
+  Qdbf_klen   int(10);
+  Revcst_7    char(52);
+  Qdbf_narray char(3840);
+end-ds;
+
+//  ... Key Name Array (Qdb_Qdbf_Narray)
+dcl-ds Qdb_Qdbf_Narray_t qualified template;
+  Qdbf_kname char(10);
+  Revcst_6   char(22);
+end-ds;
+
+//  ... Referential Constraint Definition (Qdb_Qdbf_Riafk_Afkd)
+dcl-ds Qdb_Qdbf_Riafk_Afkd_t qualified template;
+  Qdbf_riafk_pkfn  char(10) pos(1);
+  Qdbf_riafk_pkln  char(10) pos(11);
+  Revcst_3         char(44) pos(21);
+  Qdbf_riafk_fkcdr char(1) pos(65);
+  Revcst_4         char(1) pos(66);
+  Qdbf_riafk_fkcur char(1) pos(67);
+  Revcst_5         char(61) pos(68);
+end-ds;
+
+//  ... Check Constraint (Qdb_Qdbf_Chk_Cst)
+dcl-ds Qdb_Qdbf_Chk_Cst_t qualified template;
+  Qdbf_chkcst_len  int(10) pos(1);
+  Qdbf_chkexpr_len int(10) pos(5);
+  Revcst_8         char(24) pos(9);
+  Qdbf_chkexpr     char(1968) pos(33);
+end-ds;
+
+// ---------------------------------------------------
+//  FILD0200
+// ---------------------------------------------------
+
+//  Format Definition Header (Qdb_Qddfmt)
+dcl-ds Qdb_Qddfmt_t qualified template;
+  bytRet            int(10);
+  bytAvl            int(10);
+  Reserved_62       char(24);
+  Qddfmtf           char(1);
+  Qddfxlto          int(10);
+  Qddfrcao          int(10);
+  Qddfdico          int(10);
+  Qddfrcid          int(5);
+  Qddfsrcd          int(5);
+  Qddfrtcd          int(5);
+  Qddfrlcd          int(5);
+  Reserved_64       char(7);
+  Qddftflgs         char(1);
+  Qddflgs           uns(3);
+  Reserved_67       char(4);
+  Qddfrlen          int(10);
+  Qddfname          char(10);
+  Qddfseq           char(13);
+  Qddftext          char(50);
+  Qddffldnum        int(5);
+  Qddf_Identity_Off int(10) pos(146);
+  // Qddffldx                    CHAR(*)   Start of field definition arra(Qdb_Qddffld)
+  Qddffldx          char(256) pos(257);
+end-ds;
+
+//  Field Header (Qdb_Qddffld)
+dcl-ds Qdb_Qddffld_t qualified template;
+  Qddfdefl     int(10);
+  Qddffldi     char(30);
+  Qddfflde     char(30);
+  Qddfftyp     char(2);
+  Qddffiob     char(1);
+  Qddffobo     int(10);
+  Qddffibo     int(10);
+  Qddffldb     int(5);
+  Qddffldd     int(5);
+  Qddffldp     int(5);
+  //  ...
+  Qddffldst2   uns(3) pos(86);
+  //  ...
+  Qddflalc     uns(5) pos(92);
+  Qddfdttf     char(1);
+  Qddfdtts     char(1);
+  Qddfcsid     uns(5);
+  //  ...
+  Qddfdftd     uns(10) pos(195);
+  //  ...
+  Qddftxtd     int(10) pos(209);
+  Reserved_102 char(2);
+  Qddfrefd     int(10);
+  Qddfedtl     int(5);
+  Qddfedtd     int(10);
+  Reserved_76  int(5);
+  Qddfchd      int(10);
+  //  ...
+  Qddfxals     int(10) pos(237);
+end-ds;
+
+//  Reference Information (Qdb_Qddfrefi)
+dcl-ds Qdb_Qddfrefi_t qualified template;
+  Qddfrcde    char(1);
+  Qddfrfil    char(10);
+  Qddfrlib    char(10);
+  Qddfrfmt    char(10);
+  Qddfrfld    char(30);
+  Reserved_78 char(19);
+end-ds;
+
+//  Edit Code/Edit Word Information (Qdb_Qddfedcw)
+dcl-ds Qdb_Qddfedcw_t qualified template;
+  Qddfecdi    char(2);
+  Qddfecde    char(1) overlay(Qddfecdi);
+  Qddfecdx    char(1) overlay(Qddfecdi: 2);
+  Reserved_79 char(14);
+  Qddfewd     char(64);
+end-ds;
+
+//  Field Text (Qdb_Qddfftxt)
+dcl-ds Qdb_Qddfftxt_t qualified template;
+  Qddfftxt char(50);
+end-ds;
+
+//  Alias name structure (Qdb_Qddfalis)
+dcl-ds Qdb_Qddfalis_t qualified template;
+  Qddfalsl    int(5);
+  Reserved_85 char(14);
+  Qddfalsn    char(258);
+end-ds;
+
+//  Default Value Description Information (Qdb_Qddfdft)
+dcl-ds Qdb_Qddfdft_t qualified template;
+  Qddfdftl    int(5);
+  Qddfdfta    uns(3);
+  Reserved_87 char(13);
+  Qddfdftv    char(32724);
+end-ds;
+
+dcl-c QDDFDFTA_GRAPHIC 128; // DBCS/graphic d
+dcl-c QDDFDFTA_HEX 32; // Hex default.
+dcl-c QDDFDFTA_NULL 4; // Null default.
+dcl-c QDDFDFTA_DATE_TIME 2; // Current date/t
+dcl-c QDDFDFTA_DFT_KEYWORD 1; // DFT/DFTVAL spe
+
+//  Column Heading Information (Qdb_Qddfcolh)
+dcl-ds Qdb_Qddfcolh_t qualified template;
+  Qddfch1 char(20);
+  Qddfch2 char(20);
+  Qddfch3 char(20);
+end-ds;
+
+/endif
 ]]>  </copysrc>
 </mbr>
 <sendmsg  sendmsgid="CPF9897" sendmsgtype = "*STATUS   "><![CDATA[
@@ -2018,446 +2007,424 @@ mbrtext =  "Retrieve Constraint List API - Example 1          "
 srcfile =  "QRTVCSTL  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
-      *=====================================================================*
-      *  Author  :  Thomas Raddatz                                          *
-      *  Date    :  21.06.2003                                              *
-      *  E-mail  :  thomas.raddatz@tools400.de                              *
-      *  Homepage:  www.tools400.de                                         *
-      *=====================================================================*
-      *                                                                     *
-      *  This software is free software, you can redistribute it and/or     *
-      *  modify it under the terms of the GNU General Public License (GPL)  *
-      *  as published by the Free Software Foundation.                      *
-      *                                                                     *
-      *  See GNU General Public License for details.                        *
-      *          http://www.opensource.org                                  *
-      *          http://www.opensource.org/licenses/gpl-license.html        *
-      *                                                                     *
-      *=====================================================================*
-      *  History:                                                           *
-      *                                                                     *
-      *  Datum       Name          Änderung                                 *
-      *  ----------  ------------  ---------------------------------------  *
-      *                                                                     *
-      *=====================================================================*
-      *   >>PRE-COMPILER<<                                                  *
-      *     >>CRTCMD<<  CRTRPGMOD    MODULE(&LI/&OB) +                      *
-      *                              SRCFILE(&SL/&SF) SRCMBR(&SM);          *
-      *     >>IMPORTANT<<                                                   *
-      *       >>PARM<< TRUNCNBR(*NO);                                       *
-      *       >>PARM<< DBGVIEW(*LIST);                                      *
-      *       >>PARM<< OPTION(*EVENTF);                                     *
-      *     >>END-IMPORTANT<<                                               *
-      *     >>EXECUTE<<                                                     *
-      *     >>CMD<<     CRTPGM       PGM(&LI/&OB) +                         *
-      *                              MODULE(*PGM) +                         *
-      *                              BNDSRVPGM(&LI/RTVCSTL) +               *
-      *                              ACTGRP(*NEW) +                         *
-      *                              DETAIL(*BASIC);                        *
-      *   >>END-PRE-COMPILER<<                                              *
-      *=====================================================================*
-     H EXTBININT(*YES)
-     H DATFMT(*ISO) TIMFMT(*ISO) DEBUG(*YES)
-      *=====================================================================*
-     FQSYSPRT   O    F  132        PRINTER oflind(*in70)
-     F                                     infds(printer)
-     F                                     usropn
-      *
-     D printer         DS                  qualified
-     D  odpType               81     82A
-     D  file                  83     92A
-     D  library               93    102A
-     D  splF                 103    112A
-     D  splFLib              113    122A
-     D  splFNbr              123    124I 0
-      *
-      /COPY QRTVCSTL,PRTVCSTL
-      *
-      *  Reference fields
-      /COPY QRTVCSTL,FDCSTL0100
-      /COPY QRTVCSTL,FDERRCODE
-      /COPY QRTVCSTL,FDMSG
-      /COPY QRTVCSTL,FDQOBJ
-      *
-      *  *ENTRY parameter list
-     D RTVCSTL_T1...
-     D                 PR                  extpgm('RTVCSTL_T1')
-     D  gi_file                      10A   const
-     D  gi_lib                       10A   const
-      *
-      *  Internal prototypes
-     D main...
-     D                 PR
-     D  i_file                       10A   const
-     D  i_lib                        10A   const
-      *
-     D printLine...
-     D                 PR
-     D  i_line                      128A   value
-      *
-     D printCstHeader...
-     D                 PR
-     D  i_header                     50a   const varying
-     D  i_cstl0100                         const likeds(cstl0100_t)
-      *
-     D printRefCst...
-     D                 PR
-     D  i_cstl0100                         const likeds(cstl0100_t)
-      *
-     D printPriKeyCst...
-     D                 PR
-     D  i_cstl0100                         const likeds(cstl0100_t)
-      *
-     D printUnqCst...
-     D                 PR
-     D  i_cstl0100                         const likeds(cstl0100_t)
-      *
-     D printChkCst...
-     D                 PR
-     D  i_cstl0100                         const likeds(cstl0100_t)
-      *
-     D getDltRule...
-     D                 PR            10A   varying
-     D  i_cstl0100                         const likeds(cstl0100_t)
-      *
-     D getUpdRule...
-     D                 PR            10A   varying
-     D  i_cstl0100                         const likeds(cstl0100_t)
-      *
-     D sndInfoMsg...
-     D                 PR
-     D  i_msgText                   128A   value
-      *
-      *  Global constants
-     D cTrue           C                   const(*on )
-     D cFalse          C                   const(*off)
-      *
-      ********************************************************************
-      *  PROGRAM ENTRY POINT
-      ********************************************************************
-      *
-     D RTVCSTL_T1...
-     D                 PI
-     D  gi_file                      10A   const
-     D  gi_lib                       10A   const
-      /free
+**free
+//=====================================================================*
+//  Author  :  Thomas Raddatz                                          *
+//  Date    :  21.06.2003                                              *
+//  E-mail  :  thomas.raddatz@tools400.de                              *
+//  Homepage:  www.tools400.de                                         *
+//=====================================================================*
+//                                                                     *
+//  This software is free software, you can redistribute it and/or     *
+//  modify it under the terms of the GNU General Public License (GPL)  *
+//  as published by the Free Software Foundation.                      *
+//                                                                     *
+//  See GNU General Public License for details.                        *
+//          http://www.opensource.org                                  *
+//          http://www.opensource.org/licenses/gpl-license.html        *
+//                                                                     *
+//=====================================================================*
+//  History:                                                           *
+//                                                                     *
+//  Datum       Name           nderung                                 *
+//  ----------  ------------  ---------------------------------------  *
+//                                                                     *
+//=====================================================================*
+//   >>PRE-COMPILER<<                                                  *
+//     >>CRTCMD<<  CRTRPGMOD    MODULE(&LI/&OB) +                      *
+//                              SRCFILE(&SL/&SF) SRCMBR(&SM);          *
+//     >>IMPORTANT<<                                                   *
+//       >>PARM<< TRUNCNBR(*NO);                                       *
+//       >>PARM<< DBGVIEW(*LIST);                                      *
+//       >>PARM<< OPTION(*EVENTF);                                     *
+//     >>END-IMPORTANT<<                                               *
+//     >>EXECUTE<<                                                     *
+//     >>CMD<<     CRTPGM       PGM(&LI/&OB) +                         *
+//                              MODULE(*PGM) +                         *
+//                              BNDSRVPGM(*LIBL/RTVCSTL) +             *
+//                              ACTGRP(*NEW) +                         *
+//                              DETAIL(*BASIC);                        *
+//   >>END-PRE-COMPILER<<                                              *
+//=====================================================================*
+ctl-opt extbinint(*yes);
+ctl-opt datfmt(*iso) timfmt(*iso) debug(*yes);
+//=====================================================================*
+dcl-f QSYSPRT printer(132) usage(*output) oflind(*in70) infds(printer) usropn;
 
-         main(gi_file: gi_lib);
+dcl-ds printer qualified;
+  odpType char(2) pos(81);
+  file    char(10);
+  library char(10);
+  splF    char(10);
+  splFLib char(10);
+  splFNbr int(5);
+end-ds;
 
-         *inlr = *on;
+/copy QRTVCSTL,PRTVCSTL
 
-      /end-free
-      *
-      *==================================================================*
-      *  Main Procedure
-      *==================================================================*
-     P main...
-     P                 B                   export
-     D                 PI
-     D  i_file                       10A   const
-     D  i_lib                        10A   const
-      *
-      *  Local helper fields
-     D hasNext         S               N   inz
-     D handle          S                   like(cstLst_handle_t) inz
-     D msg             S                   like(msg_t) inz
-     D cstType         S             10A    inz
-     D cstl0100        DS                  likeds(cstl0100_t) inz
-      /free
+//  Reference fields
+/copy QRTVCSTL,FDCSTL0100
+/copy QRTVCSTL,FDERRCODE
+/copy QRTVCSTL,FDMSG
+/copy QRTVCSTL,FDQOBJ
 
-         // Open List of Databse File Constraints
-         if (f_opnCstLst(i_file: i_lib: '*NONE': handle: msg));
+//  *ENTRY parameter list
+dcl-pr RTVCSTL_T1 extpgm('RTVCSTL_T1');
+  gi_file char(10) const;
+  gi_lib  char(10) const;
+end-pr;
 
-           open QSYSPRT;
+//  Internal prototypes
+dcl-pr main;
+  i_file char(10) const;
+  i_lib  char(10) const;
+end-pr;
 
-           // Read 1. Constraint
-           hasNext = f_getFirstCst(handle: cstl0100);
+dcl-pr printLine;
+  i_line char(128) value;
+end-pr;
 
-           dow hasNext;
-             // Show entry
-             if (hasNext);
-               select;
-               when (cstl0100.cstType = 'R');
-                 cstType = '*REFCST';
-                 printRefCst(cstl0100);
-               when (cstl0100.cstType = 'P');
-                 cstType = '*PRIKEY';
-                 printPriKeyCst(cstl0100);
-               when (cstl0100.cstType = 'U');
-                 cstType = '*UNQCST';
-                 printUnqCst(cstl0100);
-               when (cstl0100.cstType = 'C');
-                 cstType = '*CHKCST';
-                 printChkCst(cstl0100);
-               endsl;
+dcl-pr printCstHeader;
+  i_header   varchar(50) const;
+  i_cstl0100 likeds(cstl0100_t) const;
+end-pr;
 
-               sndInfoMsg(%trim(cstl0100.file) + '/'  +
-                            %trim(cstl0100.file) + ': ' +
-                            %trim(cstType) + '; ' +
-                            cstl0100.cstName);
-             endif;
+dcl-pr printRefCst;
+  i_cstl0100 likeds(cstl0100_t) const;
+end-pr;
 
-             // Read next entry
-             hasNext = f_getNextCst(handle: cstl0100);
-           enddo;
+dcl-pr printPriKeyCst;
+  i_cstl0100 likeds(cstl0100_t) const;
+end-pr;
 
-           // Close List of Databse File Constraints
-           f_cloCstLst(handle);
+dcl-pr printUnqCst;
+  i_cstl0100 likeds(cstl0100_t) const;
+end-pr;
 
-           if (%open(QSYSPRT));
-             close QSYSPRT;
-           endif;
+dcl-pr printChkCst;
+  i_cstl0100 likeds(cstl0100_t) const;
+end-pr;
 
-         endif;
+dcl-pr getDltRule varchar(10);
+  i_cstl0100 likeds(cstl0100_t) const;
+end-pr;
 
-         return;
+dcl-pr getUpdRule varchar(10);
+  i_cstl0100 likeds(cstl0100_t) const;
+end-pr;
 
-      /end-free
-     P                 E
-      *
-      *==================================================================*
-      *  Print referential constraint
-      *==================================================================*
-     P printRefCst...
-     P                 B
-     D                 PI
-     D  i_cstl0100                         const likeds(cstl0100_t)
-      /free
+dcl-pr sndInfoMsg;
+  i_msgText char(128) value;
+end-pr;
 
-       printCstHeader('Referential constraint': i_cstl0100);
+//  Global constants
+dcl-c cTrue *on;
+dcl-c cFalse *off;
 
-       printLine('  #Keys      : ' + %char(i_cstl0100.numKeys));
-       printLine('  Length     : ' + %char(i_cstl0100.keyLen));
+//*******************************************************************
+//  PROGRAM ENTRY POINT
+//*******************************************************************
+dcl-pi RTVCSTL_T1;
+  gi_file char(10) const;
+  gi_lib  char(10) const;
+end-pi;
 
-       printLine('  Parent     : ' + %trim(i_cstl0100.parLib) + '/'
-                                    + %trim(i_cstl0100.parFile));
-       printLine('    key      : ' + i_cstl0100.parKey);
-       printLine('  Foreign key: ' + i_cstl0100.fgnKey);
-       printLine('  Delete rule: ' + getDltRule(i_cstl0100));
-       printLine('  Update rule: ' + getUpdRule(i_cstl0100));
+main(gi_file: gi_lib);
 
-      /end-free
-     P                 E
-      *
-      *==================================================================*
-      *  Returns the delete rule
-      *==================================================================*
-     P getDltRule...
-     P                 B
-     D                 PI            10A   varying
-     D  i_cstl0100                         const likeds(cstl0100_t)
-      *
-     D dltRule         S             10A   varying
-      /free
+*inlr = *on;
 
-       select;
-       when (i_cstl0100.dltRule = 'RS');
-         dltRule = '*RESTRICTED';
-       when (i_cstl0100.dltRule = 'NA');
-         dltRule = '*NOACTION';
-       when (i_cstl0100.dltRule = 'CC');
-         dltRule = '*CASCADE';
-       when (i_cstl0100.dltRule = 'SN');
-         dltRule = '*SETNULL';
-       when (i_cstl0100.dltRule = 'SD');
-         dltRule = '*SETDFT';
-       other;
-         dltRule = '*N';
-       endsl;
 
-       return dltRule;
+//==================================================================*
+//  Main Procedure
+//==================================================================*
+dcl-proc main export;
+  dcl-pi *n;
+    i_file char(10) const;
+    i_lib  char(10) const;
+  end-pi;
 
-      /end-free
-     P                 E
-      *
-      *==================================================================*
-      *  Returns the update rule
-      *==================================================================*
-     P getUpdRule...
-     P                 B
-     D                 PI            10A   varying
-     D  i_cstl0100                         const likeds(cstl0100_t)
-      *
-     D updRule         S             10A   varying
-      /free
+  //  Local helper fields
+  dcl-s hasNext ind inz;
+  dcl-s handle like(cstLst_handle_t) inz;
+  dcl-s msg like(msg_t) inz;
+  dcl-s cstType char(10) inz;
+  dcl-ds cstl0100 likeds(cstl0100_t) inz;
 
-       select;
-       when (i_cstl0100.updRule = 'NA');
-         updRule = '*NOACTION';
-       when (i_cstl0100.updRule = 'RS');
-         updRule = '*RESTRICTED';
-       other;
-         updRule = '*N';
-       endsl;
+  // Open List of Databse File Constraints
+  if (f_opnCstLst(i_file: i_lib: '*NONE': handle: msg));
 
-       return updRule;
+    open QSYSPRT;
 
-      /end-free
-     P                 E
-      *
-      *==================================================================*
-      *  Print primary key constraint
-      *==================================================================*
-     P printPriKeyCst...
-     P                 B
-     D                 PI
-     D  i_cstl0100                         const likeds(cstl0100_t)
-      *
-     D i               S             10I 0
-     D pos             S             10I 0
-      /free
+    // Read 1. Constraint
+    hasNext = f_getFirstCst(handle: cstl0100);
 
-       printCstHeader('Primary key': i_cstl0100);
+    dow hasNext;
+      // Show entry
+      if (hasNext);
+        select;
+        when (cstl0100.cstType = 'R');
+          cstType = '*REFCST';
+          printRefCst(cstl0100);
+        when (cstl0100.cstType = 'P');
+          cstType = '*PRIKEY';
+          printPriKeyCst(cstl0100);
+        when (cstl0100.cstType = 'U');
+          cstType = '*UNQCST';
+          printUnqCst(cstl0100);
+        when (cstl0100.cstType = 'C');
+          cstType = '*CHKCST';
+          printChkCst(cstl0100);
+        endsl;
 
-       printLine('  #Keys      : ' + %char(i_cstl0100.numKeys));
-       printLine('  Length     : ' + %char(i_cstl0100.keyLen));
-       printLine('  Fields     :');
+        sndInfoMsg(%trim(cstl0100.file) + '/'  +
+                     %trim(cstl0100.file) + ': ' +
+                     %trim(cstType) + '; ' +
+                     cstl0100.cstName);
+      endif;
 
-       pos = 1;
-       for i = 1 to i_cstl0100.numKeys;
-         printLine('    ' + %subst(i_cstl0100.parKey: pos: 10));
-         pos += 10;
-       endfor;
+      // Read next entry
+      hasNext = f_getNextCst(handle: cstl0100);
+    enddo;
 
-      /end-free
-     P                 E
-      *
-      *==================================================================*
-      *  Print unique key constraint
-      *==================================================================*
-     P printUnqCst...
-     P                 B
-     D                 PI
-     D  i_cstl0100                         const likeds(cstl0100_t)
-      *
-     D i               S             10I 0
-     D pos             S             10I 0
-      /free
+    // Close List of Databse File Constraints
+    f_cloCstLst(handle);
 
-       printCstHeader('Unique key': i_cstl0100);
+    if (%open(QSYSPRT));
+      close QSYSPRT;
+    endif;
 
-       printLine('  #Keys      : ' + %char(i_cstl0100.numKeys));
-       printLine('  Length     : ' + %char(i_cstl0100.keyLen));
-       printLine('  Fields     :');
+  endif;
 
-       pos = 1;
-       for i = 1 to i_cstl0100.numKeys;
-         printLine('    ' + %subst(i_cstl0100.parKey: pos: 10));
-         pos += 10;
-       endfor;
+  return;
 
-      /end-free
-     P                 E
-      *
-      *==================================================================*
-      *  Print check constraint
-      *==================================================================*
-     P printChkCst...
-     P                 B
-     D                 PI
-     D  i_cstl0100                         const likeds(cstl0100_t)
-      *
-     D i               S             10I 0
-     D pos             S             10I 0
-      /free
+end-proc;
 
-       printCstHeader('Check constraint': i_cstl0100);
+//==================================================================*
+//  Print referential constraint
+//==================================================================*
+dcl-proc printRefCst;
+  dcl-pi *n;
+    i_cstl0100 likeds(cstl0100_t) const;
+  end-pi;
 
-       if (i_cstl0100.expTrunc = 'Y');
-         printLine('  Truncated  : ' + 'YES');
-       else;
-         printLine('  Truncated  : ' + 'NO');
-       endif;
+  printCstHeader('Referential constraint': i_cstl0100);
 
-       printLine('  Expression : ' + i_cstl0100.chkCstExp);
+  printLine('  #Keys      : ' + %char(i_cstl0100.numKeys));
+  printLine('  Length     : ' + %char(i_cstl0100.keyLen));
 
-      /end-free
-     P                 E
-      *
-      *==================================================================*
-      *  Print constraint header
-      *==================================================================*
-     P printCstHeader...
-     P                 B
-     D                 PI
-     D  i_header                     50a   const varying
-     D  i_cstl0100                         const likeds(cstl0100_t)
-      /free
+  printLine('  Parent     : ' + %trim(i_cstl0100.parLib) + '/'
+                               + %trim(i_cstl0100.parFile));
+  printLine('    key      : ' + i_cstl0100.parKey);
+  printLine('  Foreign key: ' + i_cstl0100.fgnKey);
+  printLine('  Delete rule: ' + getDltRule(i_cstl0100));
+  printLine('  Update rule: ' + getUpdRule(i_cstl0100));
 
-       printLine('');
-       printLine(i_header + ':');
-       printLine('  Name       : ' + i_cstl0100.cstName);
-       printLine('  Library    : ' + i_cstl0100.lib);
-       printLine('  Created    : ' + %char(i_cstl0100.crtTmStmp));
-       printLine('  Type       : ' + i_cstl0100.cstType);
+end-proc;
 
-      /end-free
-     P                 E
-      *
-      *==================================================================*
-      *  Appends a line to the log
-      *==================================================================*
-     P printLine...
-     P                 B
-     D                 PI
-     D  i_line                      128A   value
-      *
-     D lineOutput      DS           132
-      /free
+//==================================================================*
+//  Returns the delete rule
+//==================================================================*
+dcl-proc getDltRule;
+  dcl-pi *n varchar(10);
+    i_cstl0100 likeds(cstl0100_t) const;
+  end-pi;
 
-       lineOutput = i_line;
+  dcl-s dltRule varchar(10);
 
-       write QSYSPRT lineOutput;
+  select;
+  when (i_cstl0100.dltRule = 'RS');
+    dltRule = '*RESTRICTED';
+  when (i_cstl0100.dltRule = 'NA');
+    dltRule = '*NOACTION';
+  when (i_cstl0100.dltRule = 'CC');
+    dltRule = '*CASCADE';
+  when (i_cstl0100.dltRule = 'SN');
+    dltRule = '*SETNULL';
+  when (i_cstl0100.dltRule = 'SD');
+    dltRule = '*SETDFT';
+  other;
+    dltRule = '*N';
+  endsl;
 
-      /end-free
-     P printLine...
-     P                 E
-      *
-      *==================================================================*
-      *  Send *INFO message
-      *==================================================================*
-     P sndInfoMsg...
-     P                 B
-     D                 PI
-     D  i_msgText                   128A   value
-      *
-      *  Local helper fields
-     D qMsgF           DS                  likeds(qObj_t) inz
-     D msgKey          S              4A   inz
-     D errCode         DS                  likeds(errcode_t) inz
-      *
-      *  Send Program Message (QMHSNDPM) API
-     D qmhsndpm        PR                  ExtPgm('QMHSNDPM')
-     D  i_msgID                       7A   const                                msgID
-     D  i_qMsgF                      20A   const                                msgF + lib
-     D  i_msgText                 32767A   const  options(*varsize)             msg data
-     D  i_lenMsgText                 10I 0 const                                length
-     D  i_msgType                    10A   const                                msg type
-     D  i_callStackE                 10A   const                                stack entry
-     D  i_callStackC                 10I 0 const                                stack counter
-     D  i_msgKey                      4A   const                                msg key
-     D  io_errCode                32767A          options(*varsize)             error code
-     D  i_lenCalStckE                10I 0        options(*nopass )             opt. group 1
-     D  i_calStckEQ                  20A          options(*nopass )             |
-     D  i_waitTime                   10I 0        options(*nopass )             |
-     D  i_calStckEDTp                10A          options(*nopass )             opt. group 2
-     D  i_ccsid                      10I 0        options(*nopass )             |
-      /free
+  return dltRule;
 
-       clear qMsgF;
-       qMsgF.name = 'QCPFMSG';
-       qMsgF.lib = '*LIBL';
+end-proc;
 
-       clear errCode;
-       errCode.bytPrv = %size(errCode);
+//==================================================================*
+//  Returns the update rule
+//==================================================================*
+dcl-proc getUpdRule;
+  dcl-pi *n varchar(10);
+    i_cstl0100 likeds(cstl0100_t) const;
+  end-pi;
 
-       qmhsndpm('CPF9897': qMsgF: i_msgText: %len(%trimr(i_msgText))
-                : '*INFO': '*CTLBDY': 1: msgKey: errCode);
+  dcl-s updRule varchar(10);
 
-      /end-free
-     P                 E
+  select;
+  when (i_cstl0100.updRule = 'NA');
+    updRule = '*NOACTION';
+  when (i_cstl0100.updRule = 'RS');
+    updRule = '*RESTRICTED';
+  other;
+    updRule = '*N';
+  endsl;
+
+  return updRule;
+
+end-proc;
+
+//==================================================================*
+//  Print primary key constraint
+//==================================================================*
+dcl-proc printPriKeyCst;
+  dcl-pi *n;
+    i_cstl0100 likeds(cstl0100_t) const;
+  end-pi;
+
+  dcl-s i int(10);
+  dcl-s pos int(10);
+
+  printCstHeader('Primary key': i_cstl0100);
+
+  printLine('  #Keys      : ' + %char(i_cstl0100.numKeys));
+  printLine('  Length     : ' + %char(i_cstl0100.keyLen));
+  printLine('  Fields     :');
+
+  pos = 1;
+  for i = 1 to i_cstl0100.numKeys;
+    printLine('    ' + %subst(i_cstl0100.parKey: pos: 10));
+    pos += 10;
+  endfor;
+
+end-proc;
+
+//==================================================================*
+//  Print unique key constraint
+//==================================================================*
+dcl-proc printUnqCst;
+  dcl-pi *n;
+    i_cstl0100 likeds(cstl0100_t) const;
+  end-pi;
+
+  dcl-s i int(10);
+  dcl-s pos int(10);
+
+  printCstHeader('Unique key': i_cstl0100);
+
+  printLine('  #Keys      : ' + %char(i_cstl0100.numKeys));
+  printLine('  Length     : ' + %char(i_cstl0100.keyLen));
+  printLine('  Fields     :');
+
+  pos = 1;
+  for i = 1 to i_cstl0100.numKeys;
+    printLine('    ' + %subst(i_cstl0100.parKey: pos: 10));
+    pos += 10;
+  endfor;
+
+end-proc;
+
+//==================================================================*
+//  Print check constraint
+//==================================================================*
+dcl-proc printChkCst;
+  dcl-pi *n;
+    i_cstl0100 likeds(cstl0100_t) const;
+  end-pi;
+
+  dcl-s i int(10);
+  dcl-s pos int(10);
+
+  printCstHeader('Check constraint': i_cstl0100);
+
+  if (i_cstl0100.expTrunc = 'Y');
+    printLine('  Truncated  : ' + 'YES');
+  else;
+    printLine('  Truncated  : ' + 'NO');
+  endif;
+
+  printLine('  Expression : ' + i_cstl0100.chkCstExp);
+
+end-proc;
+
+//==================================================================*
+//  Print constraint header
+//==================================================================*
+dcl-proc printCstHeader;
+  dcl-pi *n;
+    i_header   varchar(50) const;
+    i_cstl0100 likeds(cstl0100_t) const;
+  end-pi;
+
+  printLine('');
+  printLine(i_header + ':');
+  printLine('  Name       : ' + i_cstl0100.cstName);
+  printLine('  Library    : ' + i_cstl0100.lib);
+  printLine('  Created    : ' + %char(i_cstl0100.crtTmStmp));
+  printLine('  Type       : ' + i_cstl0100.cstType);
+
+end-proc;
+
+//==================================================================*
+//  Appends a line to the log
+//==================================================================*
+dcl-proc printLine;
+  dcl-pi *n;
+    i_line char(128) value;
+  end-pi;
+
+  dcl-ds lineOutput len(132);
+  end-ds;
+
+  lineOutput = i_line;
+
+  write QSYSPRT lineOutput;
+
+end-proc;
+
+//==================================================================*
+//  Send *INFO message
+//==================================================================*
+dcl-proc sndInfoMsg;
+  dcl-pi *n;
+    i_msgText char(128) value;
+  end-pi;
+
+  //  Local helper fields
+  dcl-ds qMsgF likeds(qObj_t) inz;
+  dcl-s msgKey char(4) inz;
+  dcl-ds errCode likeds(errcode_t) inz;
+
+  //  Send Program Message (QMHSNDPM) API
+  dcl-pr qmhsndpm extpgm('QMHSNDPM');
+    i_msgID       char(7) const; // msgID
+    i_qMsgF       char(20) const; // msgF + lib
+    i_msgText     char(32767) options(*varsize) const; // msg data
+    i_lenMsgText  int(10) const; // length
+    i_msgType     char(10) const; // msg type
+    i_callStackE  char(10) const; // stack entry
+    i_callStackC  int(10) const; // stack counter
+    i_msgKey      char(4) const; // msg key
+    io_errCode    char(32767) options(*varsize); // error code
+    i_lenCalStckE int(10) options(*nopass); // opt. group 1
+    i_calStckEQ   char(20) options(*nopass); // |
+    i_waitTime    int(10) options(*nopass); // |
+    i_calStckEDTp char(10) options(*nopass); // opt. group 2
+    i_ccsid       int(10) options(*nopass); // |
+  end-pr;
+
+  clear qMsgF;
+  qMsgF.name = 'QCPFMSG';
+  qMsgF.lib = '*LIBL';
+
+  clear errCode;
+  errCode.bytPrv = %size(errCode);
+
+  qmhsndpm('CPF9897': qMsgF: i_msgText: %len(%trimr(i_msgText))
+           : '*INFO': '*CTLBDY': 1: msgKey: errCode);
+
+end-proc;
 
 ]]>  </copysrc>
 </mbr>
@@ -2472,7 +2439,7 @@ mbrtext =  "Retrieve Constraint List API                      "
 srcfile =  "QRTVCSTL  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
      /* =================================================================== */
      /*  Author  :  Thomas Raddatz                                          */
@@ -2527,791 +2494,745 @@ mbrtext =  "Retrieve Constraint List API                      "
 srcfile =  "QRTVCSTL  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
-       //=====================================================================*
-       //  Author  :  Thomas Raddatz                                          *
-       //  Date    :  21.06.2003                                              *
-       //  E-mail  :  thomas.raddatz@Tools400.de                              *
-       //  Homepage:  www.tools400.de                                         *
-       //=====================================================================*
-       //                                                                     *
-       //  This software is free software, you can redistribute it and/or     *
-       //  modify it under the terms of the GNU General Public License (GPL)  *
-       //  as published by the Free Software Foundation.                      *
-       //                                                                     *
-       //  See GNU General Public License for details.                        *
-       //          http://www.opensource.org                                  *
-       //          http://www.opensource.org/licenses/gpl-license.html        *
-       //                                                                     *
-       //=====================================================================*
-       //  The RTVCSTL service program retrieves the list of constraints      *
-       //  that are defined for a database file.                              *
-       //  The RTVCSTL service program runs on V5R1 and higher.               *
-       //=====================================================================*
-       //  History:                                                           *
-       //                                                                     *
-       //  Datum       Name          Änderung                                 *
-       //  ----------  ------------  ---------------------------------------  *
-       //  12.08.2003  Th.Raddatz    Added cstl0100.crtTmStmp.                *
-       //  12.08.2003  Th.Raddatz    Fixed error in getEntry() when           *
-       //                            computing pQdb_Qdbf_Constraint for the   *
-       //                            next constraint.                         *
-       //                                                                     *
-       //=====================================================================*
-       //   >>PRE-COMPILER<<                                                  *
-       //     >>CRTCMD<<  CRTRPGMOD    MODULE(&LI/&OB) +                      *
-       //                              SRCFILE(&SL/&SF) SRCMBR(&SM);          *
-       //     >>IMPORTANT<<                                                   *
-       //       >>PARM<< TRUNCNBR(*NO);                                       *
-       //       >>PARM<< DBGVIEW(*LIST);                                      *
-       //       >>PARM<< OPTION(*EVENTF);                                     *
-       //     >>END-IMPORTANT<<                                               *
-       //     >>EXECUTE<<                                                     *
-       //   >>END-PRE-COMPILER<<                                              *
-       //=====================================================================*
-     H NOMAIN
-     H EXTBININT(*YES) BNDDIR('QC2LE')
-     H DATFMT(*ISO) TIMFMT(*ISO) DEBUG(*YES)
-      /COPY QRTVCSTL,COPYRIGHT
-       //=====================================================================*
-
-       //  Exported functions
-      /COPY QRTVCSTL,PRTVCSTL
-
-       //  Reference fields
-      /COPY QRTVCSTL,FDCSTL0100
-      /COPY QRTVCSTL,FDERRCODE
-      /COPY QRTVCSTL,FDMSG
-      /COPY QRTVCSTL,FDQOBJ
-      /COPY QRTVCSTL,QDBRTVFD
-
-       //  Handle
-     D handle_t        DS                  qualified            based(pDummy)
-     D  pFD                            *
-     D  curEntry                     10I 0
-     D  file                         10A
-     D  lib                          10A
-     D  reserved                     16A
-
-       //  Internal used prototypes
-     D getEntry...
-     D                 PR              N
-     D  io_handle                                 likeds(handle_t  )
-     D  o_data                    32767A          options(*varsize)
-     D  i_length                     10I 0 value
-
-     D rtvKeyFlds...
-     D                 PR                  like(cstl0100_t.parKey)
-     D  i_pQdb_Qdbf_Keyn...
-     D                                 *   const
-
-     D cvtDltRule...
-     D                 PR                  like(cstl0100_t.dltRule)
-     D  i_dltRule                          const  like(Qdb_Qdbf_...
-     D                                                 Riafk_Afkd_t.Qdbf_...
-     D                                                 riafk_fkcdr)
-
-     D cvtUpdRule...
-     D                 PR                  like(cstl0100_t.updRule)
-     D  i_updRule                          const  like(Qdb_Qdbf_...
-     D                                                 Riafk_Afkd_t.Qdbf_...
-     D                                                 riafk_fkcur)
-
-     D isApiError...
-     D                 PR              N
-     D  i_errCode                   272A   const
-
-     D newApiErrCode...
-     D                 PR           272A
-     D  i_monmsg                       N   const
-
-     D cvtApiErrCodeToMsg...
-     D                 PR                         like(msg_t)
-     D  i_errCode                   272A   const
-
-       //  Prototypes of CEE APIs
-     D ceegsi          PR                  extproc('CEEGSI')
-     D  i_posN                       10I 0 const
-     D  o_dataType                   10I 0
-     D  o_currLen                    10I 0
-     D  o_maxLen                     10I 0
-     D  o_fc                         12A          options(*omit)
-
-       //  Global constants
-     D cTrue           C                   const(*on )
-     D cFalse          C                   const(*off)
-
-       //==================================================================*
-       //  Open List Of Database File Members
-       //==================================================================*
-     P f_opnCstLst...
-     P                 B                   export
-     D                 PI              N   opdesc
-     D  i_file                       10A   const
-     D  i_lib                        10A   const
-     D  i_orderBy                    10A   value
-     D  o_handle                                  like(cstLst_handle_t)
-     D  o_msg                     32767A          options(*nopass: *varsize)
-
-       // Return value
-     D o_isDone        S               N   inz(cFalse)
-
-       // Parameter positions
-     D p_msg           C                   const(5)
-
-       // Optional parameter fields
-     D msg             DS                  likeds(msg_t)  inz
-
-       // QDBRTVFD API fields
-     D qFile           DS                  likeds(qObj_t) inz
-     D qRetFile        DS                  likeds(qObj_t) inz
-
-     D memSize         DS                  qualified            inz
-     D returned                      10I 0
-     D needed                        10I 0
-
-       // File Definition Header (Qdb_Qdbfh)
-     D Qdb_Qdbfh       DS                  likeds(Qdb_Qdbfh_t)
-     D                                     based(pQdb_Qdbfh)
-
-       // API Error code
-     D errCode         DS                  likeds(errCode_t) inz
-
-       // Handle
-     D handle          DS                  likeds(handle_t)  based(pHandle)
-
-       // Handle size
-     D hSize           S             10I 0 inz
-
-       // CEEGSI API
-     D o_msgType       S             10I 0 inz
-     D o_msgCurrLen    S             10I 0 inz
-     D o_msgMaxLen     S             10I 0 inz
-       //-------------------------------------------------------------------
-      /FREE
-
-       // Determine size of memory needed ...
-       pQdb_Qdbfh = *null;
-
-       qFile.name  = i_file;
-       qFile.lib   = i_lib;
-       errCode     = newApiErrCode(cTrue);
-
-       QDBRTVFD(memSize: %size(memSize): qRetFile: 'FILD0100': qFile
-                : '*FIRST': '0': '*LCL': '*EXT': errCode);
-
-       // if there is an error ...
-       if (isApiError(errCode));
-         // ... then signal an error
-         o_isDone = cFalse;
-       else;
-         // ... allocate memory
-         pQdb_Qdbfh = %ALLOC(memSize.needed);
-
-         dou (Qdb_Qdbfh.Qdbfyavl = Qdb_Qdbfh.Qdbfyret);
-
-           // retrieve file definition using API
-           QDBRTVFD(Qdb_Qdbfh: memSize.needed: qRetFile: 'FILD0100': qFile
-                    : '*FIRST': '0': '*LCL': '*EXT': errCode);
-
-           if (isApiError(errCode));
-             leave;
-           endif;
-
-           if (Qdb_Qdbfh.Qdbfyret < Qdb_Qdbfh.Qdbfyavl);
-             memSize.needed = Qdb_Qdbfh.Qdbfyavl;
-             pQdb_Qdbfh = %REALLOC(pQdb_Qdbfh:memSize.needed);
-           endif;
-         enddo;
-
-         // if there is an error ...
-         if (isApiError(errCode));
-           // ... then signal an error
-           o_isDone = cFalse;
-         else;
-           o_isDone = cTrue;
-         endif;
-       endif;
-
-       // create error message from the API error code
-       msg = cvtApiErrCodeToMsg(errCode);
-
-       // produce handle
-       if (o_isDone);
-         hSize = %size(handle);
-         pHandle = %ALLOC(hSize);
-         handle.pFD  = pQdb_Qdbfh;
-         handle.file = qRetFile.name;
-         handle.lib  = qRetFile.lib;
-         o_handle   = pHandle;
-       else;
-         if (pQdb_Qdbfh <> *NULL);
-           Dealloc pQdb_Qdbfh;
-         endif;
-         o_handle   = *NULL;
-       endif;
-
-       if (%parms >= p_msg);
-         ceegsi(p_msg: o_msgType: o_msgCurrLen
-               : o_msgMaxLen: *omit);
-         %subst(o_msg: 1: o_msgCurrLen) = msg;
-       endif;
-
-       return o_isDone;
-
-      /END-FREE
-     P                 E
-
-       //==================================================================*
-       //  Close List Of Database File Members
-       //==================================================================*
-     P f_cloCstLst...
-     P                 B                   export
-     D                 PI              N
-     D  io_handle                                 like(cstLst_handle_t)
-
-       // Return value
-     D o_isDone        S               N   inz(cFalse)
-
-       // Handle
-     D handle          DS                  likeds(handle_t   )  based(pHandle)
-
-       // Format Definition Header (Qdb_Qdbfh)
-     D Qdb_Qdbfh       DS                  likeds(Qdb_Qdbfh_t )
-     D                                     based(pQdb_Qdbfh  )
-       //-------------------------------------------------------------------
-      /FREE
-
-       pHandle = io_handle;
-
-       // free memory of data pointer
-       pQdb_Qdbfh = handle.pFD;
-       Dealloc pQdb_Qdbfh;
-
-       // delete handle
-       Dealloc io_handle;
-       io_handle = *NULL;
-
-       // set return value
-       o_isDone  = cTrue;
-
-       return o_isDone;
-
-      /END-FREE
-     P                 E
-
-       //==================================================================*
-       //  Get First Constraint
-       //==================================================================*
-     P f_getFirstCst...
-     P                 B                   export
-     D                 PI              N          opdesc
-     D  i_handle                           value  like(cstLst_handle_t)
-     D  o_data                    32767A          options(*varsize)
-
-       // Return value
-     D o_isDone        S               N   inz(cFalse)
-
-       // Parameter positions
-     D p_data          C                   const(2)
-
-       // Handle
-     D handle          DS                  likeds(handle_t   )  based(pHandle)
-
-       // CEEGSI API
-     D o_dataType      S             10I 0 inz
-     D o_dataCurrLen   S             10I 0 inz
-     D o_dataMaxLen    S             10I 0 inz
-       //-------------------------------------------------------------------
-      /FREE
-
-       pHandle = i_handle;
-
-       // get length of o_data
-       ceegsi(p_data: o_dataType: o_dataCurrLen: o_dataMaxLen  : *omit);
-
-       // get first entry
-       handle.curEntry = 0;
-
-       // retrieve entry data
-       o_isDone = getEntry(handle: o_data: o_dataCurrLen );
-
-       return o_isDone;
-
-      /END-FREE
-     P                 E
-
-       //==================================================================*
-       //  Get Next Constraint
-       //==================================================================*
-     P f_getNextCst...
-     P                 B                   export
-     D                 PI              N          opdesc
-     D  i_handle                           value  like(cstLst_handle_t)
-     D  o_data                    32767A          options(*varsize)
-
-       // Return value
-     D o_isDone        S               N   inz(cFalse)
-
-       // Parameter positions
-     D p_data          C                   const(2)
-
-       // Handle
-     D handle          DS                  likeds(handle_t   )  based(pHandle)
-
-       // CEEGSI API
-     D o_dataType      S             10I 0 inz
-     D o_dataCurrLen   S             10I 0 inz
-     D o_dataMaxLen    S             10I 0 inz
-       //-------------------------------------------------------------------
-      /FREE
-
-       pHandle = i_handle;
-
-       //  Get length of o_data
-       ceegsi(p_data: o_dataType: o_dataCurrLen: o_dataMaxLen  : *omit);
-
-       //  Retrieve entry data
-       o_isDone = getEntry(handle: o_data: o_dataCurrLen);
-
-       return o_isDone;
-
-      /END-FREE
-     P                 E
-
-       //==================================================================*
-       //  Get Number of Constratints available
-       //==================================================================*
-     P f_getNumCstAvl...
-     P                 B                   export
-     D                 PI            10I 0
-     D  i_handle                           value  like(cstLst_handle_t)
-
-       // Handle
-     D handle          DS                  likeds(handle_t   )  based(pHandle)
-
-       // QDBRTVFD API ...
-       // ... File Definition Header (Qdb_Qdbfh)
-     D Qdb_Qdbfh       DS                  likeds(Qdb_Qdbfh_t    )
-     D                                     based(pQdb_Qdbfh   )
-       // ... Physical File Specific Attributes (Qdb_Qdbfphys)
-     D Qdb_Qdbfphys    DS                  likeds(Qdb_Qdbfphys_t )
-     D                                     based(pQdb_Qdbfphys)
-       //-------------------------------------------------------------------
-      /FREE
-
-       pHandle = i_handle;
-
-       // get access to File Definition Header (Qdb_Qdbfh)
-       pQdb_Qdbfh = handle.pFD;
-
-       // get access to Physical File Specific Attributes (Qdb_Qdbfphys)
-       pQdb_Qdbfphys = pQdb_Qdbfh + Qdb_Qdbfh.Qdbpfof;
-
-       return Qdb_Qdbfphys.Qdbfcstn;
-
-      /END-FREE
-     P                 E
-
-       //==================================================================*
-       //  Get Entry
-       //==================================================================*
-     P getEntry...
-     P                 B
-     D                 PI              N
-     D  io_handle                                 likeds(handle_t  )
-     D  o_data                    32767A          options(*varsize)
-     D  i_length                     10I 0 value
-
-       // Return value
-     D o_isDone        S               N   inz(cFalse)
-
-       // QDBRTVFD API ...
-       // ... File Definition Header (Qdb_Qdbfh)
-     D Qdb_Qdbfh       DS                  likeds(Qdb_Qdbfh_t    )
-     D                                     based(pQdb_Qdbfh   )
-       // ... Physical File Specific Attributes (Qdb_Qdbfphys)
-     D Qdb_Qdbfphys    DS                  likeds(Qdb_Qdbfphys_t )
-     D                                     based(pQdb_Qdbfphys)
-       // ... Constraint Definition Header (Qdb_Qdbf_Constraint)
-     D Qdb_Qdbf_Constraint...
-     D                 DS                  likeds(Qdb_Qdbf_Constraint_t)
-     D                                     based(pQdb_Qdbf_Constraint)
-       // ... Constraint Keys (Qdb_Qdbf_Keyn)
-     D Qdb_Qdbf_Keyn   DS                  likeds(Qdb_Qdbf_Keyn_t      )
-     D                                     based(pQdb_Qdbf_Keyn      )
-       // ... Referential Constraint Definition (Qdb_Qdbf_Riafk_Afkd)
-     D Qdb_Qdbf_Riafk_Afkd...
-     D                 DS                  likeds(Qdb_Qdbf_Riafk_Afkd_t)
-     D                                     based(pQdb_Qdbf_Riafk_Afkd)
-       // ... Check Constraint (Qdb_Qdbf_Chk_Cst)
-     D Qdb_Qdbf_Chk_Cst...
-     D                 DS                  likeds(Qdb_Qdbf_Chk_Cst_t   )
-     D                                     based(pQdb_Qdbf_Chk_Cst   )
-
-       // Return value
-     D cstl0100        DS                  likeds(cstl0100_t) inz
-
-       // Helper fields
-     D crtTmStmp       DS                  qualified
-     D  date                          7A   inz
-     D  time                          6A   inz
-
-     D pFirstConstraint...
-     D                 S               *   inz
-     D x               S             10I 0 inz
-       //-------------------------------------------------------------------
-      /FREE
-
-       Clear cstl0100;
-
-       // get access to File Definition Header (Qdb_Qdbfh)
-       pQdb_Qdbfh = io_handle.pFD;
-
-       // get access to Physical File Specific Attributes (Qdb_Qdbfphys)
-       pQdb_Qdbfphys = pQdb_Qdbfh +
-                      Qdb_Qdbfh.Qdbpfof;
-
-       // if the file has constraints ...
-       if (Qdb_Qdbfphys.Qdbfcstn > 0);
-         //  ... then remember the starting point of the first constraint
-         pFirstConstraint = pQdb_Qdbfh + Qdb_Qdbfphys.Qdbfofcs;
-
-         For x = 0 to Qdb_Qdbfphys.Qdbfcstn - 1;
-           if (x = 0);
-             // access first constraint
-             pQdb_Qdbf_Constraint = pFirstConstraint;
-           else;
-             // access next constraint
-             pQdb_Qdbf_Constraint = pQdb_Qdbf_Constraint +
-                                    Qdb_Qdbf_Constraint.Qdbf_csto;
-           endif;
-           // if we are at the entry we are searching for ...
-           if (x = io_handle.curEntry);
-             // ... then produce return value:
-             // file & library
-             cstl0100.file    = io_handle.file;
-             cstl0100.lib     = io_handle.lib;
-             // creation timestamp
-             crtTmStmp = Qdb_Qdbf_Constraint.Qdbf_add_ts;
-             cstl0100.crtTmStmp = %date(crtTmStmp.date: *CYMD0) +
-                                  %time(crtTmStmp.time: *HMS0 );
-             // constraint name
-             cstl0100.cstname = %subst(
-                      Qdb_Qdbf_Constraint.Qdbf_cst_name :
-                      1                                 :
-                      Qdb_Qdbf_Constraint.Qdbf_cst_lp2  );
-             // constraint library
-             cstl0100.cstlib  = Qdb_Qdbf_Constraint.Qdbf_cst_lin;
-             // constraint type
-             if (Qdb_Qdbf_Constraint.Qdbf_type = 'F');
-               cstl0100.csttype = 'R';
-             else;
-               cstl0100.csttype = Qdb_Qdbf_Constraint.Qdbf_type;
-             endif;
-             // check pending status (referential & check constraint)
-             if ((Qdb_Qdbf_Constraint.Qdbf_type = 'R')   or
-                (Qdb_Qdbf_Constraint.Qdbf_type = 'C'));
-               cstl0100.chkpnd = Qdb_Qdbf_Constraint.Qdbf_chkpd;
-             else;
-               cstl0100.chkpnd = '';
-             endif;
-             // status (referential & check constraint)
-             if (Qdb_Qdbf_Constraint.Qdbf_type = 'R'   or
-                 Qdb_Qdbf_Constraint.Qdbf_type = 'C');
-               cstl0100.cststs  = Qdb_Qdbf_Constraint.Qdbf_state +
-                                  Qdb_Qdbf_Constraint.Qdbf_abled;
-             else;
-               cstl0100.cststs  = '';
-             endif;
-
-             // retrieve constraint specific information of:
-             // referential constraint
-             if (Qdb_Qdbf_Constraint.Qdbf_type = 'F');
-               // access constraint keys
-               pQdb_Qdbf_Keyn = pQdb_Qdbf_Constraint +
-                                Qdb_Qdbf_Constraint.Qdbf_Hlen;
-               cstl0100.numKeys = Qdb_Qdbf_Keyn.Qdbf_nokys;
-               cstl0100.keyLen = Qdb_Qdbf_Keyn.Qdbf_klen;
-               cstl0100.fgnKey = rtvKeyFlds(pQdb_Qdbf_Keyn);
-               // access constraint keys of parent file
-               pQdb_Qdbf_Keyn = pQdb_Qdbf_Keyn + Qdb_Qdbf_keyn.Qdbf_Kslen;
-               cstl0100.parKey  = rtvKeyFlds(pQdb_Qdbf_Keyn);
-               // referential constraint definition
-               pQdb_Qdbf_Riafk_Afkd = pQdb_Qdbf_Keyn +
-                                      Qdb_Qdbf_keyn.Qdbf_Kslen;
-               cstl0100.parFile = Qdb_Qdbf_Riafk_Afkd.Qdbf_riafk_pkfn;
-               cstl0100.parLib = Qdb_Qdbf_Riafk_Afkd.Qdbf_riafk_pkln;
-               cstl0100.dltRule = cvtDltRule(
-                                    Qdb_Qdbf_Riafk_Afkd.Qdbf_riafk_fkcdr);
-               cstl0100.updRule = cvtUpdRule(
-                                    Qdb_Qdbf_Riafk_Afkd.Qdbf_riafk_fkcur);
-             endif;
-
-             // unique constraint / primary unique constraint
-             if ((Qdb_Qdbf_Constraint.Qdbf_type = 'U')   or
-                (Qdb_Qdbf_Constraint.Qdbf_type = 'P'));
-               //                  ... access constraint keys
-               pQdb_Qdbf_Keyn = pQdb_Qdbf_Constraint +
-                                Qdb_Qdbf_Constraint.Qdbf_Hlen;
-               cstl0100.numKeys = Qdb_Qdbf_Keyn.Qdbf_nokys;
-               cstl0100.keyLen = Qdb_Qdbf_Keyn.Qdbf_klen;
-               cstl0100.parKey = rtvKeyFlds(pQdb_Qdbf_Keyn);
-             endif;
-
-             // check constraint
-             if (Qdb_Qdbf_Constraint.Qdbf_type = 'C');
-               // check constraint expression
-               pQdb_Qdbf_Chk_Cst = pQdb_Qdbf_Constraint +
-                                   Qdb_Qdbf_Constraint.Qdbf_Hlen;
-               if (Qdb_Qdbf_Chk_Cst.Qdbf_chkexpr_len <=
-                   %len(cstl0100.chkCstExp));
-                 cstl0100.exptrunc = 'N';
-                 cstl0100.chkCstExp = %subst(
-                           Qdb_Qdbf_Chk_Cst.Qdbf_chkexpr :
-                           1                             :
-                           Qdb_Qdbf_Chk_Cst.Qdbf_chkexpr_len);
-               else;
-                 cstl0100.exptrunc = 'Y';
-                 cstl0100.chkCstExp = %subst(
-                           Qdb_Qdbf_Chk_Cst.Qdbf_chkexpr :
-                           1                             :
-                           %len(cstl0100.chkCstExp));
-               endif;
-             endif;
-
-             io_handle.curEntry = io_handle.curEntry + 1;
-             o_isDone = cTrue;
-             leave;
-           endif;
-
-         Endfor;
-       endif;
-
-       %subst(o_data: 1: i_length) = cstl0100;
-
-       return o_isDone;
-
-      /END-FREE
-     P                 E
-
-       //==================================================================*
-       //  Retrieve key fields
-       //==================================================================*
-     P rtvKeyFlds...
-     P                 B
-     D                 PI                  like(cstl0100_t.parKey)
-     D  i_pQdb_Qdbf_Keyn...
-     D                                 *   const
-
-       //  Return value
-     D o_keyFlds       S                   like(cstl0100_t.parKey)
-
-       //  QDBRTVFD API ...
-       //  ... Constraint Keys (Qdb_Qdbf_Keyn)
-     D Qdb_Qdbf_Keyn   DS                  likeds(Qdb_Qdbf_Keyn_t      )
-     D                                     based(pQdb_Qdbf_Keyn      )
-       //  ... Key Name Array (Qdb_Qdbf_Narray)
-     D Qdb_Qdbf_Narray...
-     D                 DS                  likeds(Qdb_Qdbf_Narray_t    )
-     D                                     based(pQdb_Qdbf_Narray    )
-
-       //  Helper fields
-     D x               S             10I 0 inz
-     D keyNameLen      S             10I 0 inz
-       //-------------------------------------------------------------------
-      /FREE
-
-       pQdb_Qdbf_Keyn = i_pQdb_Qdbf_Keyn;
-
-       for x = 1 to Qdb_Qdbf_Keyn.Qdbf_nokys;
-         if (x = 1);
-           // access first key fields
-           pQdb_Qdbf_Narray = %addr(Qdb_Qdbf_Keyn.Qdbf_narray);
-         else;
-           // access next key field
-           pQdb_Qdbf_Narray = pQdb_Qdbf_Narray + %size(Qdb_Qdbf_Narray);
-         endif;
-
-         keyNameLen = %len(Qdb_Qdbf_Narray.Qdbf_kname);
-         %subst(o_keyFlds                        :
-               (x * keyNameLen) - keyNameLen + 1:
-               keyNameLen                       ) =
-               Qdb_Qdbf_Narray.Qdbf_kname;
-       endfor;
-
-       return o_keyFlds;
-
-      /END-FREE
-     P                 E
-
-       //==================================================================*
-       //  Convert Delete Rule
-       //==================================================================*
-     P cvtDltRule...
-     P                 B
-     D                 PI                  like(cstl0100_t.dltRule)
-     D  i_dltRule                          const  like(Qdb_Qdbf_...
-     D                                                 Riafk_Afkd_t.Qdbf_...
-     D                                                 riafk_fkcdr)
-
-       //  Return value
-     D o_dltRule       S                   like(cstl0100_t.dltRule)
-       //-------------------------------------------------------------------
-      /FREE
-
-       // Convert delete rule ...
-       select;
-       // ... *CASCADE
-       when (i_dltRule = 'C');
-         o_dltRule = 'CC';
-       // ... *SETDFT
-       when (i_dltRule = 'D');
-         o_dltRule = 'SD';
-       // ... *SETNULL
-       when (i_dltRule = 'L');
-         o_dltRule = 'SN';
-       // ... *NOACTION
-       when (i_dltRule = 'N');
-         o_dltRule = 'NA';
-       // ... *RESTRICT
-       when (i_dltRule = 'R');
-         o_dltRule = 'RS';
-       // ... unknown delete rule
-       Other;
-         o_dltRule = '??';
-       endsl;
-
-       return o_dltRule;
-
-      /END-FREE
-     P                 E
-
-       //==================================================================*
-       //  Convert Update Rule
-       //==================================================================*
-     P cvtUpdRule...
-     P                 B
-     D                 PI                  like(cstl0100_t.updRule)
-     D  i_updRule                          const  like(Qdb_Qdbf_...
-     D                                                 Riafk_Afkd_t.Qdbf_...
-     D                                                 riafk_fkcur)
-
-       //  Return value
-     D o_updRule       S                   like(cstl0100_t.updRule)
-       //-------------------------------------------------------------------
-      /FREE
-
-       // Convert update rule ...
-       select;
-       // ... *NOACTION
-       when (i_updRule = 'N');
-         o_updRule = 'NA';
-       // ... *RESTRICT
-       when (i_updRule = 'R');
-         o_updRule = 'RS';
-       // ... unknown update rule
-       Other;
-         o_updRule = '??';
-       endsl;
-
-       return o_updRule;
-
-      /END-FREE
-     P                 E
-
-       //==================================================================*
-       //  Is API Error?
-       // -----------------------------------------------------------------
-       //    cTrue  - error
-       //    cFalse - no error
-       //==================================================================*
-     P isApiError...
-     P                 B
-     D                 PI              N
-     D  i_errCode                   272A   const
-
-       //  Return value
-     D o_isError       S               N   inz(cFalse)
-
-       //  API error code
-     D errCode         DS                  likeds(errCode_t) inz
-       //-------------------------------------------------------------------
-      /FREE
-
-       errCode = i_errCode;
-
-       if (errCode.bytAvl = 0);
-         o_isError = cFalse;
-       else;
-         o_isError = cTrue;
-       endif;
-
-       return o_isError;
-
-      /END-FREE
-     P                 E
-
-       //==================================================================*
-       //  Create API error code
-       //==================================================================*
-     P newApiErrCode...
-     P                 B
-     D                 PI           272A
-     D  i_monmsg                       N   const
-
-       //  Return value
-     D errCode         DS                  likeds(errCode_t) inz
-       //-------------------------------------------------------------------
-      /FREE
-
-       Clear errCode;
-
-       if (i_monMsg = cTrue);
-         errCode.bytPrv = %size(errCode);
-       else;
-         errCode.bytPrv = 0;
-       endif;
-
-       return errCode;
-
-      /END-FREE
-     P                 E
-
-       //==================================================================*
-       //  Convert API error code to message
-       //==================================================================*
-     P cvtApiErrCodeToMsg...
-     P                 B
-     D                 PI                         like(msg_t)
-     D  i_errCode                   272A   const
-
-       //  Return value
-     D o_msg           DS                  likeds(msg_t) inz
-
-       //  API Error code
-     D errCode         DS                  likeds(errCode_t) inz
-       //-------------------------------------------------------------------
-      /FREE
-
-       errCode = i_errCode;
-
-       if ((errCode.bytAvl = 0));
-         clear o_msg;
-       else;
-         clear o_msg;
-         o_msg.ID   = errCode.excID;
-         o_msg.data = errCode.excDta;
-         o_msg.type = '*ESCAPE';
-         o_msg.file = 'QCPFMSG';
-         o_msg.lib  = 'QSYS';
-       endif;
-
-       return o_msg;
-
-      /END-FREE
-     P                 E
+**free
+//=====================================================================*
+//  Author  :  Thomas Raddatz                                          *
+//  Date    :  21.06.2003                                              *
+//  E-mail  :  thomas.raddatz@Tools400.de                              *
+//  Homepage:  www.tools400.de                                         *
+//=====================================================================*
+//                                                                     *
+//  This software is free software, you can redistribute it and/or     *
+//  modify it under the terms of the GNU General Public License (GPL)  *
+//  as published by the Free Software Foundation.                      *
+//                                                                     *
+//  See GNU General Public License for details.                        *
+//          http://www.opensource.org                                  *
+//          http://www.opensource.org/licenses/gpl-license.html        *
+//                                                                     *
+//=====================================================================*
+//  The RTVCSTL service program retrieves the list of constraints      *
+//  that are defined for a database file.                              *
+//  The RTVCSTL service program runs on V5R1 and higher.               *
+//=====================================================================*
+//  History:                                                           *
+//                                                                     *
+//  Datum       Name           nderung                                 *
+//  ----------  ------------  ---------------------------------------  *
+//  12.08.2003  Th.Raddatz    Added cstl0100.crtTmStmp.                *
+//  12.08.2003  Th.Raddatz    Fixed error in getEntry() when           *
+//                            computing pQdb_Qdbf_Constraint for the   *
+//                            next constraint.                         *
+//                                                                     *
+//=====================================================================*
+//   >>PRE-COMPILER<<                                                  *
+//     >>CRTCMD<<  CRTRPGMOD    MODULE(&LI/&OB) +                      *
+//                              SRCFILE(&SL/&SF) SRCMBR(&SM);          *
+//     >>IMPORTANT<<                                                   *
+//       >>PARM<< TRUNCNBR(*NO);                                       *
+//       >>PARM<< DBGVIEW(*LIST);                                      *
+//       >>PARM<< OPTION(*EVENTF);                                     *
+//     >>END-IMPORTANT<<                                               *
+//     >>EXECUTE<<                                                     *
+//   >>END-PRE-COMPILER<<                                              *
+//=====================================================================*
+ctl-opt nomain;
+ctl-opt extbinint(*yes) bnddir('QC2LE');
+ctl-opt datfmt(*iso) timfmt(*iso) debug(*yes);
+/copy QRTVCSTL,COPYRIGHT
+//=====================================================================*
+
+//  Exported functions
+/copy QRTVCSTL,PRTVCSTL
+
+//  Reference fields
+/copy QRTVCSTL,FDCSTL0100
+/copy QRTVCSTL,FDERRCODE
+/copy QRTVCSTL,FDMSG
+/copy QRTVCSTL,FDQOBJ
+/copy QRTVCSTL,QDBRTVFD
+
+//  Handle
+dcl-ds handle_t qualified template;
+  pFD      pointer;
+  curEntry int(10);
+  file     char(10);
+  lib      char(10);
+  reserved char(16);
+end-ds;
+
+//  Internal used prototypes
+dcl-pr getEntry ind;
+  io_handle likeds(handle_t);
+  o_data    char(32767) options(*varsize);
+  i_length  int(10) value;
+end-pr;
+
+dcl-pr rtvKeyFlds like(cstl0100_t.parKey);
+  i_pQdb_Qdbf_Keyn pointer const;
+end-pr;
+
+dcl-pr cvtDltRule like(cstl0100_t.dltRule);
+  i_dltRule like(Qdb_Qdbf_Riafk_Afkd_t.Qdbf_riafk_fkcdr) const;
+end-pr;
+
+dcl-pr cvtUpdRule like(cstl0100_t.updRule);
+  i_updRule like(Qdb_Qdbf_Riafk_Afkd_t.Qdbf_riafk_fkcur) const;
+end-pr;
+
+dcl-pr isApiError ind;
+  i_errCode char(272) const;
+end-pr;
+
+dcl-pr newApiErrCode char(272);
+  i_monmsg ind const;
+end-pr;
+
+dcl-pr cvtApiErrCodeToMsg like(msg_t);
+  i_errCode char(272) const;
+end-pr;
+
+//  Prototypes of CEE APIs
+dcl-pr ceegsi extproc('CEEGSI');
+  i_posN     int(10) const;
+  o_dataType int(10);
+  o_currLen  int(10);
+  o_maxLen   int(10);
+  o_fc       char(12) options(*omit);
+end-pr;
+
+//  Global constants
+dcl-c cTrue *on;
+dcl-c cFalse *off;
+
+//==================================================================*
+//  Open List Of Database File Members
+//==================================================================*
+dcl-proc f_opnCstLst export;
+  dcl-pi *n ind opdesc;
+    i_file    char(10) const;
+    i_lib     char(10) const;
+    i_orderBy char(10) value;
+    o_handle  like(cstLst_handle_t);
+    o_msg     char(32767) options(*nopass: *varsize);
+  end-pi;
+
+  // Return value
+  dcl-s o_isDone ind inz(cFalse);
+
+  // Parameter positions
+  dcl-c p_msg 5;
+
+  // Optional parameter fields
+  dcl-ds msg likeds(msg_t) inz;
+
+  // QDBRTVFD API fields
+  dcl-ds qFile likeds(qObj_t) inz;
+  dcl-ds qRetFile likeds(qObj_t) inz;
+
+  dcl-ds memSize qualified inz;
+    returned int(10);
+    needed   int(10);
+  end-ds;
+
+  // File Definition Header (Qdb_Qdbfh)
+  dcl-ds Qdb_Qdbfh likeds(Qdb_Qdbfh_t) based(pQdb_Qdbfh);
+
+  // API Error code
+  dcl-ds errCode likeds(errCode_t) inz;
+
+  // Handle
+  dcl-ds handle likeds(handle_t) based(pHandle);
+
+  // Handle size
+  dcl-s hSize int(10) inz;
+
+  // CEEGSI API
+  dcl-s o_msgType int(10) inz;
+  dcl-s o_msgCurrLen int(10) inz;
+  dcl-s o_msgMaxLen int(10) inz;
+  //-------------------------------------------------------------------
+
+  // Determine size of memory needed ...
+  pQdb_Qdbfh = *null;
+
+  qFile.name  = i_file;
+  qFile.lib   = i_lib;
+  errCode     = newApiErrCode(cTrue);
+
+  QDBRTVFD(memSize: %size(memSize): qRetFile: 'FILD0100': qFile
+           : '*FIRST': '0': '*LCL': '*EXT': errCode);
+
+  // if there is an error ...
+  if (isApiError(errCode));
+    // ... then signal an error
+    o_isDone = cFalse;
+  else;
+    // ... allocate memory
+    pQdb_Qdbfh = %ALLOC(memSize.needed);
+
+    dou (Qdb_Qdbfh.Qdbfyavl = Qdb_Qdbfh.Qdbfyret);
+
+      // retrieve file definition using API
+      QDBRTVFD(Qdb_Qdbfh: memSize.needed: qRetFile: 'FILD0100': qFile
+               : '*FIRST': '0': '*LCL': '*EXT': errCode);
+
+      if (isApiError(errCode));
+        leave;
+      endif;
+
+      if (Qdb_Qdbfh.Qdbfyret < Qdb_Qdbfh.Qdbfyavl);
+        memSize.needed = Qdb_Qdbfh.Qdbfyavl;
+        pQdb_Qdbfh = %REALLOC(pQdb_Qdbfh:memSize.needed);
+      endif;
+    enddo;
+
+    // if there is an error ...
+    if (isApiError(errCode));
+      // ... then signal an error
+      o_isDone = cFalse;
+    else;
+      o_isDone = cTrue;
+    endif;
+  endif;
+
+  // create error message from the API error code
+  msg = cvtApiErrCodeToMsg(errCode);
+
+  // produce handle
+  if (o_isDone);
+    hSize = %size(handle);
+    pHandle = %ALLOC(hSize);
+    handle.pFD  = pQdb_Qdbfh;
+    handle.file = qRetFile.name;
+    handle.lib  = qRetFile.lib;
+    o_handle   = pHandle;
+  else;
+    if (pQdb_Qdbfh <> *NULL);
+      Dealloc pQdb_Qdbfh;
+    endif;
+    o_handle   = *NULL;
+  endif;
+
+  if (%parms >= p_msg);
+    ceegsi(p_msg: o_msgType: o_msgCurrLen
+          : o_msgMaxLen: *omit);
+    %subst(o_msg: 1: o_msgCurrLen) = msg;
+  endif;
+
+  return o_isDone;
+
+end-proc;
+
+//==================================================================*
+//  Close List Of Database File Members
+//==================================================================*
+dcl-proc f_cloCstLst export;
+  dcl-pi *n ind;
+    io_handle like(cstLst_handle_t);
+  end-pi;
+
+  // Return value
+  dcl-s o_isDone ind inz(cFalse);
+
+  // Handle
+  dcl-ds handle likeds(handle_t) based(pHandle);
+
+  // Format Definition Header (Qdb_Qdbfh)
+  dcl-ds Qdb_Qdbfh likeds(Qdb_Qdbfh_t) based(pQdb_Qdbfh);
+  //-------------------------------------------------------------------
+
+  pHandle = io_handle;
+
+  // free memory of data pointer
+  pQdb_Qdbfh = handle.pFD;
+  Dealloc pQdb_Qdbfh;
+
+  // delete handle
+  Dealloc io_handle;
+  io_handle = *NULL;
+
+  // set return value
+  o_isDone  = cTrue;
+
+  return o_isDone;
+
+end-proc;
+
+//==================================================================*
+//  Get First Constraint
+//==================================================================*
+dcl-proc f_getFirstCst export;
+  dcl-pi *n ind opdesc;
+    i_handle like(cstLst_handle_t) value;
+    o_data   char(32767) options(*varsize);
+  end-pi;
+
+  // Return value
+  dcl-s o_isDone ind inz(cFalse);
+
+  // Parameter positions
+  dcl-c p_data 2;
+
+  // Handle
+  dcl-ds handle likeds(handle_t) based(pHandle);
+
+  // CEEGSI API
+  dcl-s o_dataType int(10) inz;
+  dcl-s o_dataCurrLen int(10) inz;
+  dcl-s o_dataMaxLen int(10) inz;
+  //-------------------------------------------------------------------
+
+  pHandle = i_handle;
+
+  // get length of o_data
+  ceegsi(p_data: o_dataType: o_dataCurrLen: o_dataMaxLen  : *omit);
+
+  // get first entry
+  handle.curEntry = 0;
+
+  // retrieve entry data
+  o_isDone = getEntry(handle: o_data: o_dataCurrLen );
+
+  return o_isDone;
+
+end-proc;
+
+//==================================================================*
+//  Get Next Constraint
+//==================================================================*
+dcl-proc f_getNextCst export;
+  dcl-pi *n ind opdesc;
+    i_handle like(cstLst_handle_t) value;
+    o_data   char(32767) options(*varsize);
+  end-pi;
+
+  // Return value
+  dcl-s o_isDone ind inz(cFalse);
+
+  // Parameter positions
+  dcl-c p_data 2;
+
+  // Handle
+  dcl-ds handle likeds(handle_t) based(pHandle);
+
+  // CEEGSI API
+  dcl-s o_dataType int(10) inz;
+  dcl-s o_dataCurrLen int(10) inz;
+  dcl-s o_dataMaxLen int(10) inz;
+  //-------------------------------------------------------------------
+
+  pHandle = i_handle;
+
+  //  Get length of o_data
+  ceegsi(p_data: o_dataType: o_dataCurrLen: o_dataMaxLen  : *omit);
+
+  //  Retrieve entry data
+  o_isDone = getEntry(handle: o_data: o_dataCurrLen);
+
+  return o_isDone;
+
+end-proc;
+
+//==================================================================*
+//  Get Number of Constratints available
+//==================================================================*
+dcl-proc f_getNumCstAvl export;
+  dcl-pi *n int(10);
+    i_handle like(cstLst_handle_t) value;
+  end-pi;
+
+  // Handle
+  dcl-ds handle likeds(handle_t) based(pHandle);
+
+  // QDBRTVFD API ...
+  // ... File Definition Header (Qdb_Qdbfh)
+  dcl-ds Qdb_Qdbfh likeds(Qdb_Qdbfh_t) based(pQdb_Qdbfh);
+  // ... Physical File Specific Attributes (Qdb_Qdbfphys)
+  dcl-ds Qdb_Qdbfphys likeds(Qdb_Qdbfphys_t) based(pQdb_Qdbfphys);
+  //-------------------------------------------------------------------
+
+  pHandle = i_handle;
+
+  // get access to File Definition Header (Qdb_Qdbfh)
+  pQdb_Qdbfh = handle.pFD;
+
+  // get access to Physical File Specific Attributes (Qdb_Qdbfphys)
+  pQdb_Qdbfphys = pQdb_Qdbfh + Qdb_Qdbfh.Qdbpfof;
+
+  return Qdb_Qdbfphys.Qdbfcstn;
+
+end-proc;
+
+//==================================================================*
+//  Get Entry
+//==================================================================*
+dcl-proc getEntry;
+  dcl-pi *n ind;
+    io_handle likeds(handle_t);
+    o_data    char(32767) options(*varsize);
+    i_length  int(10) value;
+  end-pi;
+
+  // Return value
+  dcl-s o_isDone ind inz(cFalse);
+
+  // QDBRTVFD API ...
+  // ... File Definition Header (Qdb_Qdbfh)
+  dcl-ds Qdb_Qdbfh likeds(Qdb_Qdbfh_t) based(pQdb_Qdbfh);
+  // ... Physical File Specific Attributes (Qdb_Qdbfphys)
+  dcl-ds Qdb_Qdbfphys likeds(Qdb_Qdbfphys_t) based(pQdb_Qdbfphys);
+  // ... Constraint Definition Header (Qdb_Qdbf_Constraint)
+  dcl-ds Qdb_Qdbf_Constraint likeds(Qdb_Qdbf_Constraint_t) based(pQdb_Qdbf_Constraint);
+  // ... Constraint Keys (Qdb_Qdbf_Keyn)
+  dcl-ds Qdb_Qdbf_Keyn likeds(Qdb_Qdbf_Keyn_t) based(pQdb_Qdbf_Keyn);
+  // ... Referential Constraint Definition (Qdb_Qdbf_Riafk_Afkd)
+  dcl-ds Qdb_Qdbf_Riafk_Afkd likeds(Qdb_Qdbf_Riafk_Afkd_t) based(pQdb_Qdbf_Riafk_Afkd);
+  // ... Check Constraint (Qdb_Qdbf_Chk_Cst)
+  dcl-ds Qdb_Qdbf_Chk_Cst likeds(Qdb_Qdbf_Chk_Cst_t) based(pQdb_Qdbf_Chk_Cst);
+
+  // Return value
+  dcl-ds cstl0100 likeds(cstl0100_t) inz;
+
+  // Helper fields
+  dcl-ds crtTmStmp qualified;
+    date char(7) inz;
+    time char(6) inz;
+  end-ds;
+
+  dcl-s pFirstConstraint pointer inz;
+  dcl-s x int(10) inz;
+  //-------------------------------------------------------------------
+
+  Clear cstl0100;
+
+  // get access to File Definition Header (Qdb_Qdbfh)
+  pQdb_Qdbfh = io_handle.pFD;
+
+  // get access to Physical File Specific Attributes (Qdb_Qdbfphys)
+  pQdb_Qdbfphys = pQdb_Qdbfh +
+                 Qdb_Qdbfh.Qdbpfof;
+
+  // if the file has constraints ...
+  if (Qdb_Qdbfphys.Qdbfcstn > 0);
+    //  ... then remember the starting point of the first constraint
+    pFirstConstraint = pQdb_Qdbfh + Qdb_Qdbfphys.Qdbfofcs;
+
+    For x = 0 to Qdb_Qdbfphys.Qdbfcstn - 1;
+      if (x = 0);
+        // access first constraint
+        pQdb_Qdbf_Constraint = pFirstConstraint;
+      else;
+        // access next constraint
+        pQdb_Qdbf_Constraint = pQdb_Qdbf_Constraint +
+                               Qdb_Qdbf_Constraint.Qdbf_csto;
+      endif;
+      // if we are at the entry we are searching for ...
+      if (x = io_handle.curEntry);
+        // ... then produce return value:
+        // file & library
+        cstl0100.file    = io_handle.file;
+        cstl0100.lib     = io_handle.lib;
+        // creation timestamp
+        crtTmStmp = Qdb_Qdbf_Constraint.Qdbf_add_ts;
+        cstl0100.crtTmStmp = %date(crtTmStmp.date: *CYMD0) +
+                             %time(crtTmStmp.time: *HMS0 );
+        // constraint name
+        cstl0100.cstname = %subst(
+                 Qdb_Qdbf_Constraint.Qdbf_cst_name :
+                 1                                 :
+                 Qdb_Qdbf_Constraint.Qdbf_cst_lp2  );
+        // constraint library
+        cstl0100.cstlib  = Qdb_Qdbf_Constraint.Qdbf_cst_lin;
+        // constraint type
+        if (Qdb_Qdbf_Constraint.Qdbf_type = 'F');
+          cstl0100.csttype = 'R';
+        else;
+          cstl0100.csttype = Qdb_Qdbf_Constraint.Qdbf_type;
+        endif;
+        // check pending status (referential & check constraint)
+        if ((Qdb_Qdbf_Constraint.Qdbf_type = 'R')   or
+           (Qdb_Qdbf_Constraint.Qdbf_type = 'C'));
+          cstl0100.chkpnd = Qdb_Qdbf_Constraint.Qdbf_chkpd;
+        else;
+          cstl0100.chkpnd = '';
+        endif;
+        // status (referential & check constraint)
+        if (Qdb_Qdbf_Constraint.Qdbf_type = 'R'   or
+            Qdb_Qdbf_Constraint.Qdbf_type = 'C');
+          cstl0100.cststs  = Qdb_Qdbf_Constraint.Qdbf_state +
+                             Qdb_Qdbf_Constraint.Qdbf_abled;
+        else;
+          cstl0100.cststs  = '';
+        endif;
+
+        // retrieve constraint specific information of:
+        // referential constraint
+        if (Qdb_Qdbf_Constraint.Qdbf_type = 'F');
+          // access constraint keys
+          pQdb_Qdbf_Keyn = pQdb_Qdbf_Constraint +
+                           Qdb_Qdbf_Constraint.Qdbf_Hlen;
+          cstl0100.numKeys = Qdb_Qdbf_Keyn.Qdbf_nokys;
+          cstl0100.keyLen = Qdb_Qdbf_Keyn.Qdbf_klen;
+          cstl0100.fgnKey = rtvKeyFlds(pQdb_Qdbf_Keyn);
+          // access constraint keys of parent file
+          pQdb_Qdbf_Keyn = pQdb_Qdbf_Keyn + Qdb_Qdbf_keyn.Qdbf_Kslen;
+          cstl0100.parKey  = rtvKeyFlds(pQdb_Qdbf_Keyn);
+          // referential constraint definition
+          pQdb_Qdbf_Riafk_Afkd = pQdb_Qdbf_Keyn +
+                                 Qdb_Qdbf_keyn.Qdbf_Kslen;
+          cstl0100.parFile = Qdb_Qdbf_Riafk_Afkd.Qdbf_riafk_pkfn;
+          cstl0100.parLib = Qdb_Qdbf_Riafk_Afkd.Qdbf_riafk_pkln;
+          cstl0100.dltRule = cvtDltRule(
+                               Qdb_Qdbf_Riafk_Afkd.Qdbf_riafk_fkcdr);
+          cstl0100.updRule = cvtUpdRule(
+                               Qdb_Qdbf_Riafk_Afkd.Qdbf_riafk_fkcur);
+        endif;
+
+        // unique constraint / primary unique constraint
+        if ((Qdb_Qdbf_Constraint.Qdbf_type = 'U')   or
+           (Qdb_Qdbf_Constraint.Qdbf_type = 'P'));
+          //                  ... access constraint keys
+          pQdb_Qdbf_Keyn = pQdb_Qdbf_Constraint +
+                           Qdb_Qdbf_Constraint.Qdbf_Hlen;
+          cstl0100.numKeys = Qdb_Qdbf_Keyn.Qdbf_nokys;
+          cstl0100.keyLen = Qdb_Qdbf_Keyn.Qdbf_klen;
+          cstl0100.parKey = rtvKeyFlds(pQdb_Qdbf_Keyn);
+        endif;
+
+        // check constraint
+        if (Qdb_Qdbf_Constraint.Qdbf_type = 'C');
+          // check constraint expression
+          pQdb_Qdbf_Chk_Cst = pQdb_Qdbf_Constraint +
+                              Qdb_Qdbf_Constraint.Qdbf_Hlen;
+          if (Qdb_Qdbf_Chk_Cst.Qdbf_chkexpr_len <=
+              %len(cstl0100.chkCstExp));
+            cstl0100.exptrunc = 'N';
+            cstl0100.chkCstExp = %subst(
+                      Qdb_Qdbf_Chk_Cst.Qdbf_chkexpr :
+                      1                             :
+                      Qdb_Qdbf_Chk_Cst.Qdbf_chkexpr_len);
+          else;
+            cstl0100.exptrunc = 'Y';
+            cstl0100.chkCstExp = %subst(
+                      Qdb_Qdbf_Chk_Cst.Qdbf_chkexpr :
+                      1                             :
+                      %len(cstl0100.chkCstExp));
+          endif;
+        endif;
+
+        io_handle.curEntry = io_handle.curEntry + 1;
+        o_isDone = cTrue;
+        leave;
+      endif;
+
+    Endfor;
+  endif;
+
+  %subst(o_data: 1: i_length) = cstl0100;
+
+  return o_isDone;
+
+end-proc;
+
+//==================================================================*
+//  Retrieve key fields
+//==================================================================*
+dcl-proc rtvKeyFlds;
+  dcl-pi *n like(cstl0100_t.parKey);
+    i_pQdb_Qdbf_Keyn pointer const;
+  end-pi;
+
+  //  Return value
+  dcl-s o_keyFlds like(cstl0100_t.parKey);
+
+  //  QDBRTVFD API ...
+  //  ... Constraint Keys (Qdb_Qdbf_Keyn)
+  dcl-ds Qdb_Qdbf_Keyn likeds(Qdb_Qdbf_Keyn_t) based(pQdb_Qdbf_Keyn);
+  //  ... Key Name Array (Qdb_Qdbf_Narray)
+  dcl-ds Qdb_Qdbf_Narray likeds(Qdb_Qdbf_Narray_t) based(pQdb_Qdbf_Narray);
+
+  //  Helper fields
+  dcl-s x int(10) inz;
+  dcl-s keyNameLen int(10) inz;
+  //-------------------------------------------------------------------
+
+  pQdb_Qdbf_Keyn = i_pQdb_Qdbf_Keyn;
+
+  for x = 1 to Qdb_Qdbf_Keyn.Qdbf_nokys;
+    if (x = 1);
+      // access first key fields
+      pQdb_Qdbf_Narray = %addr(Qdb_Qdbf_Keyn.Qdbf_narray);
+    else;
+      // access next key field
+      pQdb_Qdbf_Narray = pQdb_Qdbf_Narray + %size(Qdb_Qdbf_Narray);
+    endif;
+
+    keyNameLen = %len(Qdb_Qdbf_Narray.Qdbf_kname);
+    %subst(o_keyFlds                        :
+          (x * keyNameLen) - keyNameLen + 1:
+          keyNameLen                       ) =
+          Qdb_Qdbf_Narray.Qdbf_kname;
+  endfor;
+
+  return o_keyFlds;
+
+end-proc;
+
+//==================================================================*
+//  Convert Delete Rule
+//==================================================================*
+dcl-proc cvtDltRule;
+  dcl-pi *n like(cstl0100_t.dltRule);
+    i_dltRule like(Qdb_Qdbf_Riafk_Afkd_t.Qdbf_riafk_fkcdr) const;
+  end-pi;
+
+  //  Return value
+  dcl-s o_dltRule like(cstl0100_t.dltRule);
+  //-------------------------------------------------------------------
+
+  // Convert delete rule ...
+  select;
+  // ... *CASCADE
+  when (i_dltRule = 'C');
+    o_dltRule = 'CC';
+  // ... *SETDFT
+  when (i_dltRule = 'D');
+    o_dltRule = 'SD';
+  // ... *SETNULL
+  when (i_dltRule = 'L');
+    o_dltRule = 'SN';
+  // ... *NOACTION
+  when (i_dltRule = 'N');
+    o_dltRule = 'NA';
+  // ... *RESTRICT
+  when (i_dltRule = 'R');
+    o_dltRule = 'RS';
+  // ... unknown delete rule
+  Other;
+    o_dltRule = '??';
+  endsl;
+
+  return o_dltRule;
+
+end-proc;
+
+//==================================================================*
+//  Convert Update Rule
+//==================================================================*
+dcl-proc cvtUpdRule;
+  dcl-pi *n like(cstl0100_t.updRule);
+    i_updRule like(Qdb_Qdbf_Riafk_Afkd_t.Qdbf_riafk_fkcur) const;
+  end-pi;
+
+  //  Return value
+  dcl-s o_updRule like(cstl0100_t.updRule);
+  //-------------------------------------------------------------------
+
+  // Convert update rule ...
+  select;
+  // ... *NOACTION
+  when (i_updRule = 'N');
+    o_updRule = 'NA';
+  // ... *RESTRICT
+  when (i_updRule = 'R');
+    o_updRule = 'RS';
+  // ... unknown update rule
+  Other;
+    o_updRule = '??';
+  endsl;
+
+  return o_updRule;
+
+end-proc;
+
+//==================================================================*
+//  Is API Error?
+// -----------------------------------------------------------------
+//    cTrue  - error
+//    cFalse - no error
+//==================================================================*
+dcl-proc isApiError;
+  dcl-pi *n ind;
+    i_errCode char(272) const;
+  end-pi;
+
+  //  Return value
+  dcl-s o_isError ind inz(cFalse);
+
+  //  API error code
+  dcl-ds errCode likeds(errCode_t) inz;
+  //-------------------------------------------------------------------
+
+  errCode = i_errCode;
+
+  if (errCode.bytAvl = 0);
+    o_isError = cFalse;
+  else;
+    o_isError = cTrue;
+  endif;
+
+  return o_isError;
+
+end-proc;
+
+//==================================================================*
+//  Create API error code
+//==================================================================*
+dcl-proc newApiErrCode;
+  dcl-pi *n char(272);
+    i_monmsg ind const;
+  end-pi;
+
+  //  Return value
+  dcl-ds errCode likeds(errCode_t) inz;
+  //-------------------------------------------------------------------
+
+  Clear errCode;
+
+  if (i_monMsg = cTrue);
+    errCode.bytPrv = %size(errCode);
+  else;
+    errCode.bytPrv = 0;
+  endif;
+
+  return errCode;
+
+end-proc;
+
+//==================================================================*
+//  Convert API error code to message
+//==================================================================*
+dcl-proc cvtApiErrCodeToMsg;
+  dcl-pi *n like(msg_t);
+    i_errCode char(272) const;
+  end-pi;
+
+  //  Return value
+  dcl-ds o_msg likeds(msg_t) inz;
+
+  //  API Error code
+  dcl-ds errCode likeds(errCode_t) inz;
+  //-------------------------------------------------------------------
+
+  errCode = i_errCode;
+
+  if ((errCode.bytAvl = 0));
+    clear o_msg;
+  else;
+    clear o_msg;
+    o_msg.ID   = errCode.excID;
+    o_msg.data = errCode.excDta;
+    o_msg.type = '*ESCAPE';
+    o_msg.file = 'QCPFMSG';
+    o_msg.lib  = 'QSYS';
+  endif;
+
+  return o_msg;
+
+end-proc;
 
 ]]>  </copysrc>
 </mbr>
@@ -3320,7 +3241,7 @@ CRTBNDCL PGM(&tolib/A_INSTALL) SRCFILE(&tolib/QRTVCSTL) SRCMBR(*PGM) DFTACTGRP(*
 VIEW(*LIST)
 ]]>  </qcmdexc>
 <qcmdexc condition="*NONE" release="*CURRENT" dltsplf="*NONE"><![CDATA[
-CALL PGM(&tolib/A_INSTALL) PARM('&TGTRLS' '&SRCFILE' '&tolib' '&CRTTSTPGM')
+CALL PGM(&tolib/A_INSTALL) PARM(('&TGTRLS') ('&SRCFILE') ('&tolib') ('&CRTTSTPGM'))
 ]]>  </qcmdexc>
 <qcmdexc condition="*NONE" release="*CURRENT" dltsplf="*NONE"><![CDATA[
 DLTPGM PGM(&tolib/A_INSTALL)

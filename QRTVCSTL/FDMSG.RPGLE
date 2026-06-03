@@ -1,18 +1,21 @@
-      /if not defined(msg_t     )
-      /define msg_t
-      * ============================================================= *
-      *   Message structure                                           *
-      * ============================================================= *
-      *
-     d msg_t           ds                  qualified           based(pDummy)
-     d  ID                                 likeds(msgID_t)
-     d  data                        512A
-     d  type                         10a
-     d  file                         10a
-     d  lib                          10a
-      *
-     d msgID_t         ds                  qualified           based(pDummy)
-     d  prefix                        3a
-     d  nbr                           4S 0
-      *
-      /endif
+**free
+/if not defined(msg_t)
+/define msg_t
+// ============================================================= *
+//   Message structure                                           *
+// ============================================================= *
+
+dcl-ds msg_t qualified template;
+  ID   likeds(msgID_t);
+  data char(512);
+  type char(10);
+  file char(10);
+  lib  char(10);
+end-ds;
+
+dcl-ds msgID_t qualified template;
+  prefix char(3);
+  nbr    zoned(4);
+end-ds;
+
+/endif

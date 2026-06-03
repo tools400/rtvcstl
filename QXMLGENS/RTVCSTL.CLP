@@ -19,7 +19,7 @@
 /* -------------------------------------------------------------------------- */
              XMLGENINC  XINCLUDE(*YES)
 
-             XMLGENVRS XSRCFILE(QRTVCSTL) XSRCLIB(TOOLS400) XSRCMBR(COPYRIGHT)
+             XMLGENVRS XSRCFILE(QRTVCSTL) XSRCLIB(RTVCSTLD) XSRCMBR(COPYRIGHT)
 
              XMLGENCND  XMSG('Create sample programs? (YES, NO)') +
                           XVALUES(YES NO) XVAR(&CRTTSTPGM)
@@ -30,62 +30,62 @@
 /*  Deploy source member              */
 /* ---------------------------------- */
              XMLGENMBR  XMBR(A_INSTALL ) XMBRATR(CLLE ) +
-                          XFROMSRCF(QRTVCSTL  ) XFROMSRCL(TOOLS400) +
+                          XFROMSRCF(QRTVCSTL  ) XFROMSRCL(RTVCSTLD) +
                           XTOSRCF(QRTVCSTL  ) XOBJTYPE(*PGM   ) +
                           XGENCRT(*NO ) XPARAM(*BLANK)
 
              XMLGENMBR  XMBR(A_README  ) XMBRATR(TXT) +
-                          XFROMSRCF(QRTVCSTL  ) XFROMSRCL(TOOLS400) +
+                          XFROMSRCF(QRTVCSTL  ) XFROMSRCL(RTVCSTLD) +
                           XTOSRCF(QRTVCSTL  ) XOBJTYPE(*PGM) +
                           XGENCRT(*NO ) XPARAM(*BLANK)
 
              XMLGENMBR  XMBR(COPYRIGHT ) XMBRATR(RPGLE) +
-                          XFROMSRCF(QRTVCSTL  ) XFROMSRCL(TOOLS400) +
+                          XFROMSRCF(QRTVCSTL  ) XFROMSRCL(RTVCSTLD) +
                           XTOSRCF(QRTVCSTL  ) XOBJTYPE(*PGM   ) +
                           XGENCRT(*NO ) XPARAM(*BLANK)
 
              XMLGENMBR  XMBR(FDCSTL0100) XMBRATR(RPGLE) +
-                          XFROMSRCF(QRTVCSTL  ) XFROMSRCL(TOOLS400) +
+                          XFROMSRCF(QRTVCSTL  ) XFROMSRCL(RTVCSTLD) +
                           XTOSRCF(QRTVCSTL  ) XOBJTYPE(*PGM   ) +
                           XGENCRT(*NO ) XPARAM(*BLANK)
 
              XMLGENMBR  XMBR(FDERRCODE ) XMBRATR(RPGLE) +
-                          XFROMSRCF(QRTVCSTL  ) XFROMSRCL(TOOLS400) +
+                          XFROMSRCF(QRTVCSTL  ) XFROMSRCL(RTVCSTLD) +
                           XTOSRCF(QRTVCSTL  ) XOBJTYPE(*PGM   ) +
                           XGENCRT(*NO ) XPARAM(*BLANK)
 
              XMLGENMBR  XMBR(FDMSG     ) XMBRATR(RPGLE) +
-                          XFROMSRCF(QRTVCSTL  ) XFROMSRCL(TOOLS400) +
+                          XFROMSRCF(QRTVCSTL  ) XFROMSRCL(RTVCSTLD) +
                           XTOSRCF(QRTVCSTL  ) XOBJTYPE(*PGM   ) +
                           XGENCRT(*NO ) XPARAM(*BLANK)
 
              XMLGENMBR  XMBR(FDQOBJ    ) XMBRATR(RPGLE) +
-                          XFROMSRCF(QRTVCSTL  ) XFROMSRCL(TOOLS400) +
+                          XFROMSRCF(QRTVCSTL  ) XFROMSRCL(RTVCSTLD) +
                           XTOSRCF(QRTVCSTL  ) XOBJTYPE(*PGM   ) +
                           XGENCRT(*NO ) XPARAM(*BLANK)
 
              XMLGENMBR  XMBR(PRTVCSTL  ) XMBRATR(RPGLE) +
-                          XFROMSRCF(QRTVCSTL  ) XFROMSRCL(TOOLS400) +
+                          XFROMSRCF(QRTVCSTL  ) XFROMSRCL(RTVCSTLD) +
                           XTOSRCF(QRTVCSTL  ) XOBJTYPE(*PGM   ) +
                           XGENCRT(*NO ) XPARAM(*BLANK)
 
              XMLGENMBR  XMBR(QDBRTVFD  ) XMBRATR(RPGLE) +
-                          XFROMSRCF(QRTVCSTL  ) XFROMSRCL(TOOLS400) +
+                          XFROMSRCF(QRTVCSTL  ) XFROMSRCL(RTVCSTLD) +
                           XTOSRCF(QRTVCSTL  ) XOBJTYPE(*PGM   ) +
                           XGENCRT(*NO ) XPARAM(*BLANK)
 
              XMLGENMBR  XMBR(RTVCSTL_T1) XMBRATR(RPGLE) +
-                          XFROMSRCF(QRTVCSTL  ) XFROMSRCL(TOOLS400) +
+                          XFROMSRCF(QRTVCSTL  ) XFROMSRCL(RTVCSTLD) +
                           XTOSRCF(QRTVCSTL  ) XOBJTYPE(*PGM   ) +
                           XGENCRT(*NO ) XPARAM(*BLANK)
 
              XMLGENMBR  XMBR(RTVCSTL   ) XMBRATR(BND  ) +
-                          XFROMSRCF(QRTVCSTL  ) XFROMSRCL(TOOLS400) +
+                          XFROMSRCF(QRTVCSTL  ) XFROMSRCL(RTVCSTLD) +
                           XTOSRCF(QRTVCSTL  ) XOBJTYPE(*PGM   ) +
                           XGENCRT(*NO ) XPARAM(*BLANK)
 
              XMLGENMBR  XMBR(RTVCSTLR1 ) XMBRATR(RPGLE) +
-                          XFROMSRCF(QRTVCSTL  ) XFROMSRCL(TOOLS400) +
+                          XFROMSRCF(QRTVCSTL  ) XFROMSRCL(RTVCSTLD) +
                           XTOSRCF(QRTVCSTL  ) XOBJTYPE(*PGM   ) +
                           XGENCRT(*NO ) XPARAM(*BLANK)
 
