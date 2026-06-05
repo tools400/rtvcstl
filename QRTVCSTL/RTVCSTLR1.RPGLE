@@ -21,7 +21,7 @@
 //=====================================================================*
 //  History:                                                           *
 //                                                                     *
-//  Datum       Name          nderung                                 *
+//  Datum       Name          Änderung                                 *
 //  ----------  ------------  ---------------------------------------  *
 //  12.08.2003  Th.Raddatz    Added cstl0100.crtTmStmp.                *
 //  12.08.2003  Th.Raddatz    Fixed error in getEntry() when           *

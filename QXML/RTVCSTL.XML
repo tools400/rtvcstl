@@ -51,7 +51,7 @@
       appblddate CDATA #REQUIRED
      >
      ]>
-<upload  appname="RTVCSTL"  appauthor="Thomas Raddatz"  appblddate=" 6/03/2026">
+<upload  appname="RTVCSTL"  appauthor="Thomas Raddatz"  appblddate=" 6/05/2026">
 <install_instructions><![CDATA[
      *----------------------------------------------------------------      ------
      *  1. Upload entire XML to your AS/400 to a source file 112 long, into any mbr
@@ -1315,7 +1315,7 @@ srccssid=  "01141">
      /* =================================================================== */
      /*  History:                                                           */
      /*                                                                     */
-     /*  Datum       Name           nderung                                 */
+     /*  Datum       Name          Änderung                                 */
      /*  ----------  ------------  ---------------------------------------  */
      /*                                                                     */
      /* =================================================================== */
@@ -2028,7 +2028,7 @@ srccssid=  "01141">
 //=====================================================================*
 //  History:                                                           *
 //                                                                     *
-//  Datum       Name           nderung                                 *
+//  Datum       Name          Änderung                                 *
 //  ----------  ------------  ---------------------------------------  *
 //                                                                     *
 //=====================================================================*
@@ -2519,7 +2519,7 @@ srccssid=  "01141">
 //=====================================================================*
 //  History:                                                           *
 //                                                                     *
-//  Datum       Name           nderung                                 *
+//  Datum       Name          Änderung                                 *
 //  ----------  ------------  ---------------------------------------  *
 //  12.08.2003  Th.Raddatz    Added cstl0100.crtTmStmp.                *
 //  12.08.2003  Th.Raddatz    Fixed error in getEntry() when           *
