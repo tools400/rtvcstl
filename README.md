@@ -1,6 +1,6 @@
 # RTVCSTLST - A Tools/400 Service Program
 
-RTVCSTL is service program for retrieving constraints of physical
+RTVCSTL is a service program for retrieving constraints of physical
 files.
 
 ## Dependencies
